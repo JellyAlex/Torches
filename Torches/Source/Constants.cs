@@ -1,0 +1,26 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Torches
+{
+    static class Constants
+    {
+        public const int MapX = 1;
+        public const int MapY = 10;
+
+        public const int PlayerStatsX = 24;
+        public const int PlayerStatsY = 11;
+
+        public const int PlayerItemsX = 45;
+        public const int PlayerItemsY = 10;
+
+        public const int TextOutputX = 3;
+        public const int TextOutputY = 21;
+
+        public const int TextInputX = 3;
+        public const int TextInputY = 23;
+    }
+}

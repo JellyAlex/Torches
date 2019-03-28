@@ -33,8 +33,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Colorful.Console, Version=1.2.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colorful.Console.1.2.9\lib\net461\Colorful.Console.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -43,11 +47,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Source\Constants.cs" />
+    <Compile Include="Source\Entities\Player.cs" />
+    <Compile Include="Source\Entity.cs" />
+    <Compile Include="Source\Game.cs" />
+    <Compile Include="Source\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\Renderer.cs" />
+    <Compile Include="Source\Tile.cs" />
+    <Compile Include="Source\World.cs" />
+    <Compile Include="Source\Zone.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
+    <None Include="Resources\BaseZones\0,0\entities.dat" />
+    <None Include="Resources\BaseZones\0,0\tiles.dat" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(ProjectDir)Resources" "$(ProjectDir)bin\$(ConfigurationName)\Resources" /E /Y</PostBuildEvent>
+  </PropertyGroup>
 </Project>
