@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 using System.IO;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace Torches
 {
-    class Zone
+    public class Zone
     {
         public const int Width = 16;
         public const int Height = 8;
@@ -24,8 +25,8 @@ namespace Torches
         {
             tiles = new Tile[Height, Width];
             entities = new List<Entity>();
-            this.x = 0;
-            this.y = 0;
+            x = 0;
+            y = 0;
         }
 
         public Zone(int x, int y)
@@ -37,6 +38,7 @@ namespace Torches
 
             try
             {
+                // Load tiles from file
                 using (StreamReader sr = new StreamReader("Resources/BaseZones/" + x.ToString() + "," + y.ToString() + "/tiles.dat"))
                 {
                     float index = 0;
@@ -44,18 +46,57 @@ namespace Torches
                     while ((line = sr.ReadLine()) != null)
                     {
                         string[] segments = line.Split(' ');
-                        if(segments.Length >= 2)
+
+                        if (index < 128)
                         {
-                            if(index < 128)
+                            if (segments.Length >= 2)
                             {
                                 Trace.WriteLine("Added tile " + (int)index % Width + ", " + (int)Math.Floor(index / Width));
                                 tiles[(int)Math.Floor(index / Width), (int)index % Width] = new Tile();
                                 tiles[(int)Math.Floor(index / Width), (int)index % Width].symbol = segments[0].First();
                                 tiles[(int)Math.Floor(index / Width), (int)index % Width].isSolid = Convert.ToBoolean(segments[1]);
                             }
+                            else
+                            {
+                                Trace.WriteLine("Invalid entity tile \"" + line + "\"");
+                            }
+                        }
+                        else
+                        {
+                            Trace.WriteLine("Invalid tile file, too many lines");
+                            break;
                         }
 
                         index++;
+                    }
+                }
+
+                // Load entities from file
+                using (StreamReader sr = new StreamReader("Resources/BaseZones/" + x.ToString() + "," + y.ToString() + "/entities.dat"))
+                {
+                    string line;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        string[] segments = line.Split(' ');
+                        if (segments.Length >= 5)
+                        {
+                            try
+                            {
+                                Entity entity = new Entity(segments[0].First(), Convert.ToBoolean(segments[1]), 
+                                    Convert.ToInt32(segments[2]), Convert.ToInt32(segments[3]));
+
+                                Trace.WriteLine("Added entity");
+                            }
+                            catch (Exception e)
+                            {
+                                Trace.WriteLine("ERROR: Invalid entity line: " + e.Message);
+                                Game.Stop();
+                            }
+                        }
+                        else
+                        {
+                            Trace.WriteLine("Invalid entity entry \"" + line + "\"");
+                        }
                     }
                 }
             }
@@ -63,6 +104,8 @@ namespace Torches
             {
                 Trace.WriteLine("The file could not be read:");
                 Trace.WriteLine(e.Message);
+
+                Game.Stop();
             }
         }
 
@@ -79,6 +122,50 @@ namespace Torches
             if(x >= 0 && x < Width && y >= 0 && y < Height)
             {
                 tiles[y, x] = tile;
+            }
+        }
+
+        public bool IsSolidAt(int x, int y)
+        {
+            // Check if coordinate is within zone
+            if (x < 0 || x >= Width || y < 0 || y >= Height)
+            {
+                return true;
+            }
+
+            // Check if the tile at coord is solid
+            if (tiles[y, x].isSolid)
+            {
+                return true;
+            }
+            
+            // Check if a solid entity exists at the coord
+            foreach (Entity e in entities)
+            {
+                if (e.isSolid)
+                {
+                    if (e.x == x && e.y == y)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public void Render()
+        {
+            for (int yi = 0; yi < Height; yi++)
+            {
+                for (int xi = 0; xi < Width; xi++)
+                {
+                    Renderer.PrintAt(Constants.MapX + xi, Constants.MapY + (Height - yi - 1), tiles[yi, xi].symbol, Color.LightGray);
+                }
+            }
+
+            foreach(Entity e in entities)
+            {
+                e.Render();
             }
         }
     }

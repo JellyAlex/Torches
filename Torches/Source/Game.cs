@@ -6,34 +6,44 @@ using System.Threading.Tasks;
 
 namespace Torches
 {
-    class Game
+    static class Game
     {
-        bool running = true;
+        private static bool running = false;
 
-        World world;
+        private static World world;
         
-        public Game()
+        public static void Start()
         {
+            running = true;
+
             Renderer.PrintUI();
 
             world = new World();
             
             while (running)
             {
-                Renderer.PrintGameOutput("Enter a command...");
                 string command = InputCommand();
+                string[] segments = command.Split(' ');
 
-                Update(command);
+                if(segments.First() == "quit" || segments.First() == "exit")
+                {
+                    running = false;
+                }
+                else if(segments.First() == "help" || segments.First() == "h")
+                {
+                    Help.OpenHelpMenu(segments);
+                }
+                else
+                {
+                    Update(command);
+                }
 
-                running = false;
             }
         }
 
-        private void Update(string command)
+        private static void Update(string command)
         {
             world.Update(command);
-
-            //Renderer.PrintAt(Constants.TextOutputX, Constants.TextOutputY, command);
         }
 
         public static string InputCommand()
@@ -44,6 +54,11 @@ namespace Torches
             Console.WriteLine(new string(' ', 60));
             Console.SetCursorPosition(Constants.TextInputX, Constants.TextInputY);
             return command;
+        }
+
+        public static void Stop()
+        {
+            running = false;
         }
     }
 }

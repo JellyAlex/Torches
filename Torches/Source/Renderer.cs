@@ -36,9 +36,9 @@ __________________________________________________________________
 |                |    |                    | 0             |
 --------..--------    --------------------------------------
 __________________________________________________________________
->> 
+> 
 __________________________________________________________________
-> ";
+";
         #endregion
 
         public static void PrintUI()
@@ -108,8 +108,7 @@ __________________________________________________________________
 
         public static void PrintGameOutput(string text)
         {
-
-            PrintAt(Constants.TextOutputX, Constants.TextOutputY, text.PadRight(60, ' '), Color.DarkKhaki);
+            PrintAt(Constants.TextOutputX, Constants.TextOutputY, text.PadRight(100, ' '), Color.DarkKhaki);
         }
     }
 }

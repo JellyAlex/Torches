@@ -10,11 +10,9 @@ namespace Torches
     {
         public char symbol { get; set; }
         public bool isSolid { get; set; }
+        
 
-        public Tile()
-            :this('E', false) { }
-
-        public Tile(char symbol, bool isSolid)
+        public Tile(char symbol = 'E', bool isSolid = false)
         {
             this.symbol = symbol;
             this.isSolid = isSolid;

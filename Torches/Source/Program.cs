@@ -8,7 +8,7 @@ namespace Torches
         {
             Console.WriteLine("Starting...");
 
-            Game game = new Game();
+            Game.Start();
 
             Console.WriteLine("Finished. Press any key to close...");
             Console.ReadKey();

@@ -17,10 +17,10 @@ namespace Torches
         public const int PlayerItemsX = 45;
         public const int PlayerItemsY = 11;
 
-        public const int TextOutputX = 3;
-        public const int TextOutputY = 21;
+        public const int TextOutputX = 0;
+        public const int TextOutputY = 23;
 
         public const int TextInputX = 3;
-        public const int TextInputY = 23;
+        public const int TextInputY = 21;
     }
 }

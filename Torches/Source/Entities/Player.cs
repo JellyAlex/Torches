@@ -8,7 +8,7 @@ using System.Drawing;
 
 namespace Torches.Entities
 {
-    class Player : Entity
+    public class Player : Entity
     {
         public string name { get; set; }
         public int health { get; set; }
@@ -27,7 +27,7 @@ namespace Torches.Entities
 
         override public void Render()
         {
-            Renderer.PrintAt(Constants.MapX + x,  Constants.MapY + Zone.Height - y, symbol, Color.OrangeRed);
+            Renderer.PrintAt(Constants.MapX + x,  Constants.MapY + Zone.Height - y - 1, symbol, Color.OrangeRed);
         }
     }
 }

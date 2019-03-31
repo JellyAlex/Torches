@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 using Torches.Entities;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace Torches
 {
-    class World
+    public class World
     {
         Player player;
         List<Zone> zones;
@@ -32,7 +33,7 @@ namespace Torches
 
             zones.Add(zone);
             currentZone = 0;
-            RenderCurrentZone();
+            zones[currentZone].Render();
             player.Render();
 
             string name;
@@ -44,6 +45,8 @@ namespace Torches
             } while (name.Length > 20);
 
             Renderer.PrintAt(Constants.PlayerStatsX, Constants.PlayerStatsY, name, Color.LightGray);
+
+            Renderer.PrintGameOutput("Enter a command... (type 'help' or 'h' for additional information)");
         }
 
         public World(List<Zone> zones)
@@ -53,30 +56,80 @@ namespace Torches
 
         public void Update(string command)
         {
-            string[] commandSegments = command.Split(' ');
-            if (commandSegments.First() == "info")
+            string[] segments = command.Split(' ');
+            if (segments.First() == "info")
             {
 
             }
-            else if (commandSegments.First() == "move")
+            else if (segments.First() == "move" || segments.First() == "m")
             {
-
-            }
-            else if (commandSegments.First() == "interact")
-            {
-
-            }
-        }
-
-        protected void RenderCurrentZone()
-        {
-            Zone zone = zones.ElementAt(currentZone);
-
-            for (int yi = 0; yi < Zone.Height; yi++)
-            {
-                for (int xi = 0; xi < Zone.Width; xi++)
+                if (segments.Length >= 2)
                 {
-                    Renderer.PrintAt(Constants.MapX + xi, Constants.MapY + (Zone.Height - yi - 1) , zone.tiles[yi, xi].symbol, Color.LightGray);
+                    string direction = segments[1].ToLower();
+
+                    if (direction == "right" || direction == "r" || direction == "east" || direction == "e")
+                    {
+                        if (!zones[currentZone].IsSolidAt(player.x + 1, player.y))
+                        {
+                            player.x += 1;
+                            zones[currentZone].Render();
+                            player.Render();
+                            Trace.WriteLine("Moving player right");
+                            Renderer.PrintGameOutput("Moved character east");
+                        }
+                    }
+                    else if (direction == "left" || direction == "l" || direction == "west" || direction == "w")
+                    {
+                        if (!zones[currentZone].IsSolidAt(player.x - 1, player.y))
+                        {
+                            player.x -= 1;
+                            zones[currentZone].Render();
+                            player.Render();
+                            Trace.WriteLine("Moving player left");
+                            Renderer.PrintGameOutput("Moved character west");
+                        }
+                    }
+                    else if (direction == "up" || direction == "u" || direction == "north" || direction == "n")
+                    {
+                        if (!zones[currentZone].IsSolidAt(player.x, player.y + 1))
+                        {
+                            player.y += 1;
+                            zones[currentZone].Render();
+                            player.Render();
+                            Trace.WriteLine("Moving player up");
+                            Renderer.PrintGameOutput("Moved character north");
+                        }
+                    }
+                    else if (direction == "down" || direction == "d" || direction == "south" || direction == "s")
+                    {
+                        if (!zones[currentZone].IsSolidAt(player.x, player.y - 1))
+                        {
+                            player.y -= 1;
+                            zones[currentZone].Render();
+                            player.Render();
+                            Trace.WriteLine("Moving player down");
+                            Renderer.PrintGameOutput("Moved character south");
+                        }
+                    }
+                    else
+                    {
+                        Renderer.PrintGameOutput("(Error) Unknown direction: " + direction);
+                    }
+                }
+            }
+            else if (segments.First() == "interact")
+            {
+
+            }
+            else
+            {
+                if(command.Length <=  30)
+                {
+                    Renderer.PrintGameOutput("(Error) Unknown command: " + command);
+                }
+                else
+                {
+                    Renderer.PrintGameOutput("(Error) Unknown command");
                 }
             }
         }
