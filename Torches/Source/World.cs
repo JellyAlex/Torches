@@ -76,7 +76,7 @@ namespace Torches
             {
                 for (int xi = 0; xi < Zone.Width; xi++)
                 {
-                    Renderer.PrintAt(Constants.MapX + xi, Constants.MapY + (Zone.Height - yi) , zone.tiles[yi, xi].symbol, Color.LightGray);
+                    Renderer.PrintAt(Constants.MapX + xi, Constants.MapY + (Zone.Height - yi - 1) , zone.tiles[yi, xi].symbol, Color.LightGray);
                 }
             }
         }

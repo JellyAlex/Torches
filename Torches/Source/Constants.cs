@@ -9,13 +9,13 @@ namespace Torches
     static class Constants
     {
         public const int MapX = 1;
-        public const int MapY = 10;
+        public const int MapY = 11;
 
         public const int PlayerStatsX = 24;
         public const int PlayerStatsY = 11;
 
         public const int PlayerItemsX = 45;
-        public const int PlayerItemsY = 10;
+        public const int PlayerItemsY = 11;
 
         public const int TextOutputX = 3;
         public const int TextOutputY = 21;

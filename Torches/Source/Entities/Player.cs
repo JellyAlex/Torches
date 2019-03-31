@@ -13,7 +13,7 @@ namespace Torches.Entities
         public string name { get; set; }
         public int health { get; set; }
         public int maxHealth { get; set; }
-
+        
         public Player(int x, int y, string name, int health, int maxHealth)
         {
             this.x = x;
@@ -27,7 +27,7 @@ namespace Torches.Entities
 
         override public void Render()
         {
-            Renderer.PrintAt(Constants.MapX, Constants.MapY, symbol, Color.OrangeRed);
+            Renderer.PrintAt(Constants.MapX + x,  Constants.MapY + Zone.Height - y, symbol, Color.OrangeRed);
         }
     }
 }
