@@ -1,2 +1,4 @@
-$ True 3 5 chest
-@ True 1 1 character
+start chest
+$ True 3 5
+
+end chest

@@ -1,8 +1,13 @@
-1
-2
-3
-4
-5
-6
-7
-8
+`wWelcome to the Help Menu!
+
+`w         Commands
+`w__________________________
+`wMove
+Use:
+`r[m]ove `w (Direction)
+`wDirections: `W[l]eft, [r]ight, [u]p, [d]own
+	      `W[w]est, [e]ast, [n]orth, [s]outh
+`wDescription: `WMoves player in a specified direction.
+`wOr use:
+`r[m]ove
+`wDescription: `WMoves player with WASD or arrow keys

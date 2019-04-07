@@ -11,6 +11,8 @@ namespace Torches
         private static bool running = false;
 
         private static World world;
+
+        private static List<ECS.ISystem> systems;
         
         public static void Start()
         {
@@ -19,6 +21,9 @@ namespace Torches
             Renderer.PrintUI();
 
             world = new World();
+
+            systems = new List<ECS.ISystem>();
+            systems.Add(new ECS.MoveSystem());
             
             while (running)
             {
@@ -33,17 +38,32 @@ namespace Torches
                 {
                     Help.OpenHelpMenu(segments);
                 }
-                else
+                // If the update returns false, the command has not been handled
+                else if(!Update(segments))
                 {
-                    Update(command);
+                    // Make sure the command isn't too long to print.
+                    if (command.Length <= 30)
+                    {
+                        // Give the user feedback on the dud command.
+                        Renderer.PrintGameOutput("(Error) Invalid command: " + command + ". Use command 'help'");
+                    }
+                    else
+                    {
+                        Renderer.PrintGameOutput("(Error) Invalid command. Use command 'help'");
+                    }
                 }
-
             }
         }
-
-        private static void Update(string command)
+        
+        private static bool Update(string[] segments)
         {
-            world.Update(command);
+            foreach(ECS.ISystem s in systems)
+            {
+                if (s.Update(segments, world))
+                    return true;
+            }
+
+            return false;
         }
 
         public static string InputCommand()

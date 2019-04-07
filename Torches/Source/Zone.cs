@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
 using System.Drawing;
+using Torches.ECS;
 
 namespace Torches
 {
@@ -51,7 +52,7 @@ namespace Torches
                         {
                             if (segments.Length >= 2)
                             {
-                                Trace.WriteLine("Added tile " + (int)index % Width + ", " + (int)Math.Floor(index / Width));
+                                //Trace.WriteLine("Added tile " + (int)index % Width + ", " + (int)Math.Floor(index / Width));
                                 tiles[(int)Math.Floor(index / Width), (int)index % Width] = new Tile();
                                 tiles[(int)Math.Floor(index / Width), (int)index % Width].symbol = segments[0].First();
                                 tiles[(int)Math.Floor(index / Width), (int)index % Width].isSolid = Convert.ToBoolean(segments[1]);
@@ -78,25 +79,7 @@ namespace Torches
                     while ((line = sr.ReadLine()) != null)
                     {
                         string[] segments = line.Split(' ');
-                        if (segments.Length >= 5)
-                        {
-                            try
-                            {
-                                Entity entity = new Entity(segments[0].First(), Convert.ToBoolean(segments[1]), 
-                                    Convert.ToInt32(segments[2]), Convert.ToInt32(segments[3]));
-
-                                Trace.WriteLine("Added entity");
-                            }
-                            catch (Exception e)
-                            {
-                                Trace.WriteLine("ERROR: Invalid entity line: " + e.Message);
-                                Game.Stop();
-                            }
-                        }
-                        else
-                        {
-                            Trace.WriteLine("Invalid entity entry \"" + line + "\"");
-                        }
+                        
                     }
                 }
             }
@@ -142,19 +125,49 @@ namespace Torches
             // Check if a solid entity exists at the coord
             foreach (Entity e in entities)
             {
-                if (e.isSolid)
+                if (e.HasComponent<ECS.Solid>())
                 {
-                    if (e.x == x && e.y == y)
+                    if(e.GetComponent<ECS.Solid>().isSolid)
                     {
-                        return true;
+                        if (e.GetComponent<ECS.ZonePosition>().x == x && e.GetComponent<ECS.ZonePosition>().y == y)
+                        {
+                            return true;
+                        }
                     }
                 }
             }
             return false;
         }
 
+        public Entity GetEntityAt(int x, int y)
+        {
+            // Check if coordinate is within zone
+            if (x < 0 || x >= Width || y < 0 || y >= Height)
+            {
+                return null;
+            }
+
+            // Check if an entity exists at the coord
+            foreach (Entity e in entities)
+            {
+                if (e.HasComponent<ECS.Solid>())
+                {
+                    if (e.GetComponent<ECS.Solid>().isSolid)
+                    {
+                        if (e.GetComponent<ECS.ZonePosition>().x == x && e.GetComponent<ECS.ZonePosition>().y == y)
+                        {
+                            return e;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
         public void Render()
         {
+            Console.CursorVisible = false;
             for (int yi = 0; yi < Height; yi++)
             {
                 for (int xi = 0; xi < Width; xi++)
@@ -165,8 +178,9 @@ namespace Torches
 
             foreach(Entity e in entities)
             {
-                e.Render();
+                Renderer.RenderEntity(e);
             }
+            Console.CursorVisible = true;
         }
     }
 }
