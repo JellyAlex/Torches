@@ -9,6 +9,6 @@ namespace Torches.ECS
     // A system is a class which adds functionality to the entities. (ie. completes all logic)
     public interface ISystem
     {
-        bool Update(string[] segments, World world);
+        bool Update(string[] segments, ref World world);
     }
 }
