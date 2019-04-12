@@ -53,6 +53,7 @@
     <Compile Include="Source\ECS\Components\Components.cs" />
     <Compile Include="Source\Constants.cs" />
     <Compile Include="Source\ECS\Entity.cs" />
+    <Compile Include="Source\ECS\Systems\EnemySystem.cs" />
     <Compile Include="Source\ECS\Systems\TribesmanSystem.cs" />
     <Compile Include="Source\ECS\EntityFlags.cs" />
     <Compile Include="Source\Game.cs" />

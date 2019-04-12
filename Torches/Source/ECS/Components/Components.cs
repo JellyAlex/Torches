@@ -194,5 +194,22 @@ namespace Torches.ECS
             this.color = color;
         }
     }
+
+    public enum FactionType
+    {
+        Friendly,
+        Enemy
+    }
+
+    public class Faction : IComponent
+    {
+        #region IComponent implementation
+        public Entity entity { set; get; }
+        #endregion
+
+        public FactionType faction;
+    }
+
+
     #endregion
 }
