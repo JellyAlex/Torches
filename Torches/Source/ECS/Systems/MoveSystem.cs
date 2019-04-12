@@ -10,36 +10,37 @@ namespace Torches.ECS
 {
     public class MoveSystem : ISystem
     {
-        public bool Update(string[] segments, World world)
+        public bool Update(string[] segments, ref World world)
         {
             if(segments.First() == "move" || segments.First() == "m")
             {
+                // The command contains a direction if it has two or more segments
                 if (segments.Length >= 2)
                 {
                     string direction = segments[1].ToLower();
 
                     if (direction == "right" || direction == "r" || direction == "east" || direction == "e")
                     {
-                        TryMovePlayer(world, 1, 0);
+                        TryMovePlayer(ref world, 1, 0);
                     }
                     else if (direction == "left" || direction == "l" || direction == "west" || direction == "w")
                     {
-                        TryMovePlayer(world, -1, 0);
+                        TryMovePlayer(ref world, -1, 0);
                     }
                     else if (direction == "up" || direction == "u" || direction == "north" || direction == "n")
                     {
-                        TryMovePlayer(world, 0, 1);
+                        TryMovePlayer(ref world, 0, 1);
                     }
                     else if (direction == "down" || direction == "d" || direction == "south" || direction == "s")
                     {
-                        TryMovePlayer(world, 0, -1);
+                        TryMovePlayer(ref world, 0, -1);
                     }
                     else
                     {
                         Renderer.PrintGameOutput("(Error) Unknown direction: " + direction);
                     }
                 }
-                else
+                else // move the player using WASD
                 {
                     ConsoleKeyInfo key;
                     do
@@ -50,19 +51,19 @@ namespace Torches.ECS
 
                         if (key.Key == ConsoleKey.RightArrow || key.Key == ConsoleKey.D)
                         {
-                            TryMovePlayer(world, 1, 0);
+                            TryMovePlayer(ref world, 1, 0);
                         }
                         else if (key.Key == ConsoleKey.LeftArrow || key.Key == ConsoleKey.A)
                         {
-                            TryMovePlayer(world, -1, 0);
+                            TryMovePlayer(ref world, -1, 0);
                         }
                         if (key.Key == ConsoleKey.UpArrow || key.Key == ConsoleKey.W)
                         {
-                            TryMovePlayer(world, 0, 1);
+                            TryMovePlayer(ref world, 0, 1);
                         }
                         else if (key.Key == ConsoleKey.DownArrow || key.Key == ConsoleKey.S)
                         {
-                            TryMovePlayer(world, 0, -1);
+                            TryMovePlayer(ref world, 0, -1);
                         }
 
                     } while (key.Key != ConsoleKey.Escape);
@@ -77,7 +78,8 @@ namespace Torches.ECS
             }
         }
 
-        private void TryMovePlayer(World world, int dx, int dy)
+        // This function moves the player if the position is available (ie. not solid and in map)
+        private void TryMovePlayer(ref World world, int dx, int dy)
         {
             if (!world.GetCurrentZone().IsSolidAt(world.GetPlayer().GetComponent<ZonePosition>().x + dx, world.GetPlayer().GetComponent<ZonePosition>().y + dy))
             {
