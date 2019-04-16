@@ -25,9 +25,11 @@ namespace Torches.ECS
         public static uint latestEntityID = 0;
         public readonly uint id;
         
-        private List<IComponent> components;
+        private readonly List<IComponent> components;
 
         public EntityFlags flags;
+
+        public bool Removed { get; set; } = false;
 
         public Entity()
             :this(new EntityFlags()) { }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 
 using System.Security.Cryptography;
+using System.Runtime.InteropServices;
 
 namespace Torches
 {
@@ -15,10 +16,30 @@ namespace Torches
         private static World world;
 
         private static List<ECS.ISystem> systems;
-        
+
+
+        // Disable selection in console (https://stackoverflow.com/questions/13656846/how-to-programmatic-disable-c-sharp-console-applications-quick-edit-mode)
+        const int STD_INPUT_HANDLE = -10;
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern IntPtr GetStdHandle(int nStdHandle);
+        [DllImport("kernel32.dll")]
+        static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
+        [DllImport("kernel32.dll")]
+        static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
+        ///////////////////////////////////////////////////////////////////////
+
         public static void Start()
         {
             running = true;
+
+            // Disable selection in console (https://stackoverflow.com/questions/13656846/how-to-programmatic-disable-c-sharp-console-applications-quick-edit-mode)
+            const uint ENABLE_QUICK_EDIT = 0x0040;
+            IntPtr consoleHandle = GetStdHandle(STD_INPUT_HANDLE);
+            uint consoleMode;
+            GetConsoleMode(consoleHandle, out consoleMode);
+            consoleMode &= ~ENABLE_QUICK_EDIT;
+            SetConsoleMode(consoleHandle, consoleMode);
+            /////////////////////////////////////////////////////////////
 
             Renderer.PrintUI();
 
@@ -80,9 +101,13 @@ namespace Torches
             foreach(ECS.ISystem s in systems)
             {
                 if (s.Update(segments, ref world))
+                {
+                    world.Update();
                     return true;
+                }
             }
 
+            world.Update();
             return false;
         }
 
@@ -91,7 +116,7 @@ namespace Torches
             Console.SetCursorPosition(Constants.TextInputX, Constants.TextInputY);
             string command = Console.ReadLine();
             Console.SetCursorPosition(Constants.TextInputX, Constants.TextInputY);
-            Console.WriteLine(new string(' ', 60));
+            Console.WriteLine(new string(' ', 100));
             Console.SetCursorPosition(Constants.TextInputX, Constants.TextInputY);
             return command;
         }

@@ -201,18 +201,33 @@ namespace Torches.ECS
         // This is an array of the different damage coefficients that the player can do to the enemy.
         public int[] playerAttackPattern;
         // This is an array of the different damages that the enemy can inflict to the player.
-        public int[] playerDefencePattern;
+        public int[] playerDefendPattern;
 
         // Delay of attack/defence scroller in milliseconds
         public int delay;
 
-        public Enemy(int[] playerAttackPattern, int[] playerDefencePattern, int delay)
+        public Enemy(int[] playerAttackPattern, int[] playerDefendPattern, int delay)
         {
             this.playerAttackPattern = playerAttackPattern;
-            this.playerDefencePattern = playerDefencePattern;
+            this.playerDefendPattern = playerDefendPattern;
             this.delay = delay;
         }
     }
-    
+
+    public class Damager : IComponent
+    {
+        #region IComponent implementation
+        public Entity entity { set; get; }
+        #endregion
+
+        public int damage;
+
+        public Damager(int damage)
+        {
+            this.damage = damage;
+        }
+    }
+
+
     #endregion
 }

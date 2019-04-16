@@ -248,21 +248,27 @@ namespace Torches
                                     {
                                         if(componentData.Length == 3)
                                         {
+                                            // Load attack/defend patterns from file
                                             string[] playerAttackPatternRaw = componentData[0].Split('|');
-                                            string[] playerDefencePatternRaw = componentData[1].Split('|');
+                                            string[] playerDefendPatternRaw = componentData[1].Split('|');
 
                                             int[] playerAttackPattern = new int[playerAttackPatternRaw.Length];
-                                            int[] playerDefencePattern = new int[playerDefencePatternRaw.Length];
+                                            int[] playerDefendPattern = new int[playerDefendPatternRaw.Length];
 
+                                            // Convert arrays from string[] to int[].
                                             for (int i = 0; i < playerAttackPatternRaw.Length; i++)
                                             {
                                                 if(!int.TryParse(playerAttackPatternRaw[i], out playerAttackPattern[i]))
                                                     Trace.WriteLine("Error: Error while parsing int for attack pattern.");
-
-                                                if (!int.TryParse(playerDefencePatternRaw[i], out playerDefencePattern[i]))
-                                                    Trace.WriteLine("Error: Error while parsing int for defence pattern.");
                                             }
 
+                                            for (int i = 0; i < playerDefendPatternRaw.Length; i++)
+                                            {
+                                                if (!int.TryParse(playerDefendPatternRaw[i], out playerDefendPattern[i]))
+                                                    Trace.WriteLine("Error: Error while parsing int for defend pattern.");
+                                            }
+
+                                            // Get delay from file.
                                             int delay;
                                             if(!int.TryParse(componentData[2], out delay))
                                             {
@@ -270,11 +276,29 @@ namespace Torches
                                             }
 
                                             entities[currentIndex].AddComponent(
-                                                new Enemy(playerAttackPattern, playerDefencePattern, delay));
+                                                new Enemy(playerAttackPattern, playerDefendPattern, delay));
                                         }
                                         else
                                         {
                                             Trace.WriteLine("Error: Enemy takes 2 parameters.");
+                                        }
+                                    }
+                                    else if (component == "Damager")
+                                    {
+                                        if (componentData.Length == 1)
+                                        {
+                                            if (int.TryParse(componentData[0], out int damage))
+                                            {
+                                                entities[currentIndex].AddComponent(new Damager(damage));
+                                            }
+                                            else
+                                            {
+                                                Trace.WriteLine("Error: Error while converting Damager parameters");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Trace.WriteLine("Error: Damager takes 1 parameter.");
                                         }
                                     }
                                 }
@@ -282,11 +306,8 @@ namespace Torches
                                 {
                                     Trace.WriteLine("Error: Invalid Entity File (Resources/BaseZones/" + x.ToString() + ", " + y.ToString() + " /entities.dat)");
                                 }
-
                             } // end if (segments.Length == 1 || segments.Length == 2)
-
                         } // end if(line.Length >= 2)
-
                     }
                 }
             }
@@ -367,7 +388,23 @@ namespace Torches
             return null;
         }
 
-        public void Render()
+        // Remove all entities that are scheduled to be removed.
+        public void Update()
+        {
+            // Render tiles below removed entities.
+            foreach(Entity e in entities.Where(x => x.Removed))
+            {
+                if(e.HasComponent<ZonePosition>())
+                {
+                    RenderTile(e.GetComponent<ZonePosition>().x, e.GetComponent<ZonePosition>().y);
+                }
+            }
+
+            // Remove entities from list.
+            entities.RemoveAll(x => x.Removed);
+        }
+
+        public void RenderAll()
         {
             // Render tiles.
             Console.CursorVisible = false;
@@ -440,6 +477,5 @@ namespace Torches
                 Renderer.PrintAt(Constants.MapX + Width / 2    , Constants.MapY + Height, '-', Color.LightGray);
             }
         }
-
     }
 }

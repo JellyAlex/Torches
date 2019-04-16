@@ -22,7 +22,9 @@ namespace Torches
             player
                 .AddComponent(new ZonePosition(8, 3))
                 .AddComponent(new Symbol('@'))
-                .AddComponent(new Colour(Color.DarkRed));
+                .AddComponent(new Colour(Color.DarkRed))
+                .AddComponent(new Health(100, 100))
+                .AddComponent(new Damager(10));
 
 
             Trace.WriteLine("Player pos: " + player.GetComponent<ZonePosition>().x + ", " + player.GetComponent<ZonePosition>().y);
@@ -34,7 +36,7 @@ namespace Torches
             zones.Add(new Zone(1, 0));
 
             currentZone = 0;
-            zones[currentZone].Render();
+            zones[currentZone].RenderAll();
             Renderer.RenderEntity(player);
             
             string name;
@@ -72,7 +74,7 @@ namespace Torches
                     player.GetComponent<ZonePosition>().x = px;
                     player.GetComponent<ZonePosition>().y = py;
 
-                    zones[currentZone].Render();
+                    zones[currentZone].RenderAll();
                     Renderer.RenderEntity(player);
 
                     return;
@@ -80,6 +82,14 @@ namespace Torches
             }
 
             Trace.WriteLine($"Error: Zone {zx}, {zy} not found.");
+        }
+
+        public void Update()
+        {
+            foreach(Zone zone in zones)
+            {
+                zone.Update();
+            }
         }
     }
 }
