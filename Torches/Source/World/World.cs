@@ -18,18 +18,21 @@ namespace Torches
 
         public World()
         {
-            player = new Entity();
-            player.AddComponent(new ZonePosition(8, 3))
+            player = new Entity(EntityFlags.Player);
+            player
+                .AddComponent(new ZonePosition(8, 3))
                 .AddComponent(new Symbol('@'))
                 .AddComponent(new Colour(Color.DarkRed));
+
 
             Trace.WriteLine("Player pos: " + player.GetComponent<ZonePosition>().x + ", " + player.GetComponent<ZonePosition>().y);
 
             zones = new List<Zone>();
 
-            Zone zone = new Zone(0, 0);
+            // TODO: Automatically load all zones found in base zones.
+            zones.Add(new Zone(0, 0));
+            zones.Add(new Zone(1, 0));
 
-            zones.Add(zone);
             currentZone = 0;
             zones[currentZone].Render();
             Renderer.RenderEntity(player);
@@ -55,6 +58,28 @@ namespace Torches
         public ref Entity GetPlayer()
         {
             return ref player;
+        }
+
+
+        public void ChangeZone(int zx, int zy, int px, int py)
+        {
+            for (int i = 0; i < zones.Count; i++)
+            {
+                if(zones[i].x == zx && zones[i].y == zy)
+                {
+                    currentZone = i;
+
+                    player.GetComponent<ZonePosition>().x = px;
+                    player.GetComponent<ZonePosition>().y = py;
+
+                    zones[currentZone].Render();
+                    Renderer.RenderEntity(player);
+
+                    return;
+                }
+            }
+
+            Trace.WriteLine($"Error: Zone {zx}, {zy} not found.");
         }
     }
 }

@@ -66,8 +66,8 @@ __________________________________________________________________
                 {
                     Console.Write(c, Color.White);
                 }
-
-                Thread.Sleep(10);
+                
+                //Thread.Sleep(10);
             }
 
             foreach (char c in uiBase)

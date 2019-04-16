@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
+
+using System.Security.Cryptography;
 
 namespace Torches
 {
@@ -24,7 +26,9 @@ namespace Torches
 
             systems = new List<ECS.ISystem>();
             systems.Add(new ECS.MoveSystem());
-            
+            systems.Add(new ECS.EnemySystem());
+            systems.Add(new ECS.TribesmanSystem());
+
             while (running)
             {
                 string command = InputCommand();
@@ -38,19 +42,35 @@ namespace Torches
                 {
                     Help.OpenHelpMenu(segments);
                 }
+                // Turn on cheats
+                else if(segments.First() == "cheat")
+                {
+                    if(segments.Length >= 2)
+                    {
+                        SHA256 sha256 = SHA256.Create();
+
+                        // Check if password is correct, without storing it in code.
+                        if(BitConverter.ToString(
+                            sha256.ComputeHash(
+                                Encoding.UTF8.GetBytes(segments[1]))) == 
+                                // Hash value of the password.
+                                "83-AF-00-23-EA-54-C5-97-F6-C0-47-1E-F2-80-0A-C6-EC-19-0E-92-22-FC-62-19-4B-6B-7E-9E-32-AD-8A-ED")
+                        {
+                            Renderer.PrintGameOutput("Access Granted ;)");
+                        }
+                        else
+                        {
+                            Renderer.PrintGameOutputColoured("`RINTRUDER DETECTED... EXITING");
+                            Thread.Sleep(3000);
+                            Stop();
+                        }
+                    }
+                    
+                }
                 // If the update returns false, the command has not been handled
                 else if(!Update(segments))
                 {
-                    // Make sure the command isn't too long to print.
-                    if (command.Length <= 30)
-                    {
-                        // Give the user feedback on the dud command.
-                        Renderer.PrintGameOutput("(Error) Invalid command: " + command + ". Use command 'help'");
-                    }
-                    else
-                    {
-                        Renderer.PrintGameOutput("(Error) Invalid command. Use command 'help'");
-                    }
+                    Renderer.PrintGameOutput("Error");
                 }
             }
         }
@@ -59,7 +79,7 @@ namespace Torches
         {
             foreach(ECS.ISystem s in systems)
             {
-                if (s.Update(segments, world))
+                if (s.Update(segments, ref world))
                     return true;
             }
 

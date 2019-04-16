@@ -2,8 +2,8 @@
 
 `w         Commands
 `w__________________________
-`wMove
-Use:
+`WMove
+`wUse:
 `r[m]ove `w (Direction)
 `wDirections: `W[l]eft, [r]ight, [u]p, [d]own
 	      `W[w]est, [e]ast, [n]orth, [s]outh
@@ -11,3 +11,25 @@ Use:
 `wOr use:
 `r[m]ove
 `wDescription: `WMoves player with WASD or arrow keys
+
+`WInteract
+`wUse:
+`r[i]nteract `w (Direction)
+`wDirections: `W[l]eft, [r]ight, [u]p, [d]own
+	      `W[w]est, [e]ast, [n]orth, [s]outh
+`wDescription: `WInteracts with any characters 
+`W             in the specified direction.
+`wOr use:
+`r[i]nteract
+`wDescription: `WInteracts with any characters nearby.
+
+`WAttack
+`wUse:
+`r[a]ttack `w (Direction)
+`wDirections: `W[l]eft, [r]ight, [u]p, [d]own
+	      `W[w]est, [e]ast, [n]orth, [s]outh
+`wDescription: `WAttack enemy in specified direction. 
+
+`wOr use:
+`r[a]ttack
+`wDescription: `WAttacks any enemies nearby.

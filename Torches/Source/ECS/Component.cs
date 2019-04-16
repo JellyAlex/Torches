@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Torches.ECS
 {
-    [Flags]
-    public enum EntityFlags : short
+    // A component is a data structure which an entity can subscribe to.
+    public interface IComponent
     {
-        None = 0,
-        Tribesman = 1
+        Entity entity { get; set; }
     }
 }

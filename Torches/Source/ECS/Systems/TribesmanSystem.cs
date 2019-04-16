@@ -14,7 +14,7 @@ namespace Torches.ECS
             {
                 if(segments.Length >= 2)
                 {
-                    string direction = segments[1].ToLower();
+                    string direction = segments[1].ToLower().Trim();
 
                     if (direction == "right" || direction == "r" || direction == "east" || direction == "e")
                     {
@@ -37,6 +37,17 @@ namespace Torches.ECS
                         Renderer.PrintGameOutput("(Error) Unknown direction: " + direction);
                     }
                 }
+                else
+                {
+                    // Check for the tribesman in all four directions.
+                    if (!HandleTribesman(ref world, 1, 0))
+                        if (!HandleTribesman(ref world, -1, 0))
+                            if (!HandleTribesman(ref world, 0, 1))
+                                return HandleTribesman(ref world, 0, -1);
+                            else return true;
+                        else return true;
+                    else return true;
+                }
             }
 
             return false;
@@ -51,7 +62,7 @@ namespace Torches.ECS
             }
             else if (tribesman.HasFlag(EntityFlags.Tribesman))
             {
-                Renderer.PrintGameOutput("You have met the tribesman.");
+                Renderer.PrintGameOutput("You have met the tribesman");
 
                 return true;
             }

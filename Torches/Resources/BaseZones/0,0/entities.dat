@@ -1,4 +1,6 @@
-start chest
-$ True 3 5
-
-end chest
+// 0, 0
+Entity
+Flags			= Tribesman, Solid
+ZonePosition	= 1, 1
+Symbol			= @
+Colour			= Gray

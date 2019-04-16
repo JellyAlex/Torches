@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Torches.ECS;
+using System.Diagnostics;
 
 namespace Torches.ECS
 {
@@ -17,6 +17,7 @@ namespace Torches.ECS
                 // The command contains a direction if it has two or more segments
                 if (segments.Length >= 2)
                 {
+                    // Get direction from the second part of the command
                     string direction = segments[1].ToLower();
 
                     if (direction == "right" || direction == "r" || direction == "east" || direction == "e")
@@ -67,7 +68,7 @@ namespace Torches.ECS
                         }
 
                     } while (key.Key != ConsoleKey.Escape);
-                    Renderer.PrintGameOutput("Enter a command... (type 'help' or 'h' for additional information)");
+                    Renderer.PrintGameOutput("Enter a command... (type 'help' for additional information)");
                 }
 
                 return true;
@@ -81,11 +82,56 @@ namespace Torches.ECS
         // This function moves the player if the position is available (ie. not solid and in map)
         private void TryMovePlayer(ref World world, int dx, int dy)
         {
-            if (!world.GetCurrentZone().IsSolidAt(world.GetPlayer().GetComponent<ZonePosition>().x + dx, world.GetPlayer().GetComponent<ZonePosition>().y + dy))
+            // Check if player is trying to leave the zone.
+            int targetX = world.GetPlayer().GetComponent<ZonePosition>().x + dx;
+            int targetY = world.GetPlayer().GetComponent<ZonePosition>().y + dy;
+
+
+            // Right door.
+            if (targetX == Zone.Width && targetY == Zone.Height / 2)
             {
+                if (world.GetCurrentZone().doors[0])
+                {
+                    world.ChangeZone(world.GetCurrentZone().x + 1, world.GetCurrentZone().y, 0, targetY);
+                }
+            }
+            // Top door.
+            else if (targetY == Zone.Height && targetX == Zone.Width / 2 - 1 || targetY == Zone.Height && targetX == Zone.Width / 2)
+            {
+                if (world.GetCurrentZone().doors[1])
+                {
+                    world.ChangeZone(world.GetCurrentZone().x, world.GetCurrentZone().y + 1, targetX, 0);
+                }
+            }
+            // Left door.
+            else if (targetX == -1 && targetY == Zone.Height / 2)
+            {
+                if (world.GetCurrentZone().doors[2])
+                {
+                    world.ChangeZone(world.GetCurrentZone().x - 1, world.GetCurrentZone().y, Zone.Width - 1, targetY);
+                }
+            }
+            // Bottom door.
+            else if (targetY == -1 && targetX == Zone.Width / 2 - 1 || targetY == -1 && targetX == Zone.Width / 2)
+            {
+                if (world.GetCurrentZone().doors[3])
+                {
+                    world.ChangeZone(world.GetCurrentZone().x, world.GetCurrentZone().y - 1, targetX, Zone.Height - 1);
+                }
+            }
+
+            // Make sure player can't go through solid objects.
+            else if (!world.GetCurrentZone().IsSolidAt(world.GetPlayer().GetComponent<ZonePosition>().x + dx, world.GetPlayer().GetComponent<ZonePosition>().y + dy))
+            {
+                // Change the player's position.
                 world.GetPlayer().GetComponent<ZonePosition>().x += dx;
                 world.GetPlayer().GetComponent<ZonePosition>().y += dy;
-                world.GetCurrentZone().Render();
+
+                // Render the tile that the player was standing on.
+                world.GetCurrentZone().RenderTile(world.GetPlayer().GetComponent<ZonePosition>().x - dx,
+                    world.GetPlayer().GetComponent<ZonePosition>().y - dy);
+
+                // Render the player.
                 Renderer.RenderEntity(world.GetPlayer());
             }
         }

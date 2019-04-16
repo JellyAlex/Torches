@@ -9,18 +9,34 @@ using Torches.ECS;
 
 namespace Torches.ECS
 {
+    [Flags]
+    public enum EntityFlags : short
+    {
+        None = 0,
+        Solid = 1,
+        Player = 2,
+        Tribesman = 4,
+        Enemy = 8
+    }
+
     // An entity is a collection of components (information). It is treated differently depending on the data structures it contains.
     public class Entity
     {
         public static uint latestEntityID = 0;
         public readonly uint id;
-        public readonly List<IComponent> components;
+        
+        private List<IComponent> components;
+
         public EntityFlags flags;
 
         public Entity()
+            :this(new EntityFlags()) { }
+
+        public Entity(EntityFlags flags)
         {
             id = latestEntityID++;
             components = new List<IComponent>();
+            this.flags = flags;
         }
 
         public Entity AddComponent(IComponent newComponent)
@@ -32,9 +48,7 @@ namespace Torches.ECS
             }
             else
             {
-                // Add new component to component list.
                 components.Add(newComponent);
-                newComponent.entity = this;
             }
 
             // Return this entity so multiple commands can be chained.
@@ -43,7 +57,7 @@ namespace Torches.ECS
 
         public bool HasComponent<T>() where T : class, IComponent
         {
-            // Check if a component of the specified type exists
+            //Check if a component of the specified type exists
             foreach (IComponent cp in components)
                 if(cp is T)
                     return true;

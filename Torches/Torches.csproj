@@ -49,27 +49,33 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Source\ECS\IComponent.cs" />
+    <Compile Include="Source\ECS\Component.cs" />
     <Compile Include="Source\ECS\Components\Components.cs" />
     <Compile Include="Source\Constants.cs" />
     <Compile Include="Source\ECS\Entity.cs" />
+    <Compile Include="Source\ECS\Systems\CheatSystem.cs" />
     <Compile Include="Source\ECS\Systems\EnemySystem.cs" />
     <Compile Include="Source\ECS\Systems\TribesmanSystem.cs" />
-    <Compile Include="Source\ECS\EntityFlags.cs" />
     <Compile Include="Source\Game.cs" />
-    <Compile Include="Source\Help.cs" />
+    <Compile Include="Source\Menus\Help.cs" />
     <Compile Include="Source\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\Renderer.cs" />
     <Compile Include="Source\ECS\ISystem.cs" />
     <Compile Include="Source\ECS\Systems\MoveSystem.cs" />
-    <Compile Include="Source\Tile.cs" />
-    <Compile Include="Source\World.cs" />
-    <Compile Include="Source\Zone.cs" />
+    <Compile Include="Source\World\Tile.cs" />
+    <Compile Include="Source\World\World.cs" />
+    <Compile Include="Source\World\Zone.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="Resources\BaseZones\1,0\entities.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\BaseZones\1,0\tiles.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\BaseZones\0,0\entities.dat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

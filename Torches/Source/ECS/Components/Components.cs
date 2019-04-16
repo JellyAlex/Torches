@@ -165,22 +165,16 @@ namespace Torches.ECS
         #endregion
 
         public List<ItemStack> itemStacks;
-    }
 
-    public class Solid : IComponent
-    {
-        #region IComponent implementation
-        public Entity entity { set; get; }
-        #endregion
-
-        public bool isSolid;
-
-        public Solid(bool isSolid)
+        public Inventory(List<ItemStack> itemStacks)
         {
-            this.isSolid = isSolid;
+            this.itemStacks = itemStacks;
         }
-    }
 
+        public Inventory()
+            :this(new List<ItemStack>()) { }
+    }
+    
     public class Colour : IComponent
     {
         #region IComponent implementation
@@ -193,23 +187,32 @@ namespace Torches.ECS
         {
             this.color = color;
         }
+
+        public Colour()
+            :this(Color.White) { }
     }
 
-    public enum FactionType
-    {
-        Friendly,
-        Enemy
-    }
-
-    public class Faction : IComponent
+    public class Enemy : IComponent
     {
         #region IComponent implementation
         public Entity entity { set; get; }
         #endregion
 
-        public FactionType faction;
+        // This is an array of the different damage coefficients that the player can do to the enemy.
+        public int[] playerAttackPattern;
+        // This is an array of the different damages that the enemy can inflict to the player.
+        public int[] playerDefencePattern;
+
+        // Delay of attack/defence scroller in milliseconds
+        public int delay;
+
+        public Enemy(int[] playerAttackPattern, int[] playerDefencePattern, int delay)
+        {
+            this.playerAttackPattern = playerAttackPattern;
+            this.playerDefencePattern = playerDefencePattern;
+            this.delay = delay;
+        }
     }
-
-
+    
     #endregion
 }
