@@ -16,7 +16,9 @@ namespace Torches.ECS
         Solid = 1,
         Player = 2,
         Tribesman = 4,
-        Enemy = 8
+        Enemy = 8,
+        Loot = 16,
+        DigSpot = 32
     }
 
     // An entity is a collection of components (information). It is treated differently depending on the data structures it contains.
@@ -78,9 +80,21 @@ namespace Torches.ECS
             return null;
         }
 
+        public Entity AddFlag(EntityFlags flag)
+        {
+            flags |= flag;
+            return this;
+        }
+
         public bool HasFlag(EntityFlags flag)
         {
             return (flags & flag) == flag;
+        }
+
+        public Entity RemoveFlag(EntityFlags flag)
+        {
+            flags &= ~flag;
+            return this;
         }
     }
 }

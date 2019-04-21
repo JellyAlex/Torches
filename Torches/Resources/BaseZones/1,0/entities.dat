@@ -1,10 +1,12 @@
 // 1, 0
 Entity
 Flags			= Solid
-ZonePosition	= 13, 4
+Position	    = 13, 4
 Symbol			= %
 Colour			= Red
-Character		= Test Enemy
+Character		= Weasel
 Health			= 100, 100
 Enemy			= 1|1|1|2|2|3|3|4|5|5|4|3|3|2|2|1|1|1, 2|2|2|4|1|1|1|1|4|2|2|2, 50
 Damager			= 10
+Inventory		= 3 iron, 1 rock
+Weapon			= Claw, 2

@@ -3,33 +3,43 @@
 `w         Commands
 `w__________________________
 `WMove
-`wUse:
+`wCommand:
 `r[m]ove `w (Direction)
 `wDirections: `W[l]eft, [r]ight, [u]p, [d]own
 	      `W[w]est, [e]ast, [n]orth, [s]outh
 `wDescription: `WMoves player in a specified direction.
-`wOr use:
+`wOr command:
 `r[m]ove
 `wDescription: `WMoves player with WASD or arrow keys
 
 `WInteract
-`wUse:
+`wCommand:
 `r[i]nteract `w (Direction)
 `wDirections: `W[l]eft, [r]ight, [u]p, [d]own
 	      `W[w]est, [e]ast, [n]orth, [s]outh
 `wDescription: `WInteracts with any characters 
 `W             in the specified direction.
-`wOr use:
+`wOr command:
 `r[i]nteract
 `wDescription: `WInteracts with any characters nearby.
 
 `WAttack
-`wUse:
+`wCommand:
 `r[a]ttack `w (Direction)
 `wDirections: `W[l]eft, [r]ight, [u]p, [d]own
 	      `W[w]est, [e]ast, [n]orth, [s]outh
 `wDescription: `WAttack enemy in specified direction. 
 
-`wOr use:
+`wOr command:
 `r[a]ttack
 `wDescription: `WAttacks any enemies nearby.
+
+`WLoot
+Command:
+`r[l]oot
+`wDescription: `WOpens menu to swap items with from item pile directly below the player.
+
+`WDrop
+`wCommand:
+`r[d]rop
+`wDescription: `WOpens menu to drop items onto the ground.

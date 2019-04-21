@@ -8,10 +8,10 @@ namespace Torches
         {
             Console.WriteLine("Starting...");
 
-            Game.Start();
-
-            Console.WriteLine("Finished. Press any key to close...");
-            Console.ReadKey();
+            while(!Game.Success)
+            {
+                Game.Start();
+            }
         }
     }
 }

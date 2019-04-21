@@ -9,96 +9,7 @@ using System.Diagnostics;
 
 namespace Torches.ECS
 {
-    public class ItemStack
-    {
-        int typeID;
-        List<Item> items;
-
-        public ItemStack()
-            :this(-1) {}
-
-        public ItemStack(int type)
-        {
-            this.typeID = type;
-            items = new List<Item>();
-        }
-
-        public ItemStack(int type, int count)
-        {
-            this.typeID = type;
-            items = new List<Item>();
-
-            for(int i = 0; i < count; i++)
-            {
-                items.Add(new Item(type));
-            }
-        }
-
-        public ItemStack(List<Item> items)
-            :this(items, items.Count > 0 ? items[0].type : -1)
-        {
-            
-        }
-
-        public ItemStack(List<Item> items, int type)
-        {
-            this.items = items;
-            this.typeID = type;
-
-            for (int i = items.Count - 1; i >= 0; i--)
-            {
-                if (this.items[i].type != this.typeID)
-                {
-                    Trace.WriteLine("Had to remove item " + this.items[i].ToString() + " from ItemStack.");
-                    this.items.RemoveAt(i);
-                }
-            }
-        }
-
-        // Function withdraws a certain number of items from the stack.
-        public ItemStack Withdraw(int numItems)
-        {
-            if(items.Count >= numItems)
-            {
-                List<Item> toReturn = items.GetRange(0, numItems);
-                items = items.GetRange(numItems, items.Count - numItems);
-                return new ItemStack(toReturn, typeID);
-            }
-            else
-            {
-                return Withdraw(items.Count);
-            }
-        }
-    }
-
-    public class Item
-    {
-        public int type;
-        public string displayName;
-
-        public Item()
-            : this(-1, "error") { }
-
-        public Item(int type)
-            :this(type, type.ToString())
-        {
-            
-        }
-
-        public Item(int type, string displayName)
-        {
-            this.type = type;
-            this.displayName = displayName;
-        }
-
-        public override string ToString()
-        {
-            return displayName;
-        }
-    }
-
-    #region Components
-    public class ZonePosition : IComponent
+    public class Position : IComponent
     {
         #region IComponent implementation
         public Entity entity { set; get; }
@@ -107,10 +18,29 @@ namespace Torches.ECS
         public int x;
         public int y;
 
-        public ZonePosition(int x, int y)
+        public Position(int x, int y)
         {
             this.x = x;
             this.y = y;
+        }
+
+        public Position TranslateX(int dx)
+        {
+            x += dx;
+            return this;
+        }
+
+        public Position TranslateY(int dy)
+        {
+            y += dy;
+            return this;
+        }
+
+        public Position Translate(int dx, int dy)
+        {
+            x += dx;
+            y += dy;
+            return this;
         }
     }
 
@@ -158,22 +88,7 @@ namespace Torches.ECS
         }
     }
 
-    public class Inventory : IComponent
-    {
-        #region IComponent implementation
-        public Entity entity { set; get; }
-        #endregion
-
-        public List<ItemStack> itemStacks;
-
-        public Inventory(List<ItemStack> itemStacks)
-        {
-            this.itemStacks = itemStacks;
-        }
-
-        public Inventory()
-            :this(new List<ItemStack>()) { }
-    }
+    
     
     public class Colour : IComponent
     {
@@ -221,13 +136,88 @@ namespace Torches.ECS
         #endregion
 
         public int damage;
+        public int baseDamage;
 
         public Damager(int damage)
         {
             this.damage = damage;
+            baseDamage = damage;
         }
     }
 
+    public class Inventory : IComponent
+    {
+        #region IComponent implementation
+        public Entity entity { set; get; }
+        #endregion
 
-    #endregion
+        public Dictionary<string, int> items;
+
+        public Inventory(Dictionary<string, int> items)
+        {
+            this.items = items;
+        }
+
+        public Inventory()
+            : this(new Dictionary<string, int>()) { }
+
+        // Allow two inventories to be added together.
+        public static Inventory operator +(Inventory a, Inventory b)
+        {
+            Inventory result = new Inventory(a.items);
+
+            foreach(KeyValuePair<string, int> itemstack in b.items)
+            {
+                if(result.items.ContainsKey(itemstack.Key))
+                {
+                    result.items[itemstack.Key] += b.items[itemstack.Key];
+                }
+                else
+                {
+                    result.items.Add(itemstack.Key, b.items[itemstack.Key]);
+                }
+            }
+
+            return result;
+        }
+    }
+
+    public class Weapon : IComponent // TODO: Implement weapons.
+    {
+        #region IComponent implementation
+        public Entity entity { set; get; }
+        #endregion
+
+        public string name;
+        public int damage;
+
+        public Weapon(string name = "none", int damage = 1)
+        {
+            this.name = name;
+            this.damage = damage;
+        }
+
+        public Weapon(Weapon weapon)
+        {
+            name = weapon.name;
+            damage = weapon.damage;
+        }
+    }
+
+    public class Coins : IComponent // TODO: Implement currency.
+    {
+        #region IComponent implementation
+        public Entity entity { set; get; }
+        #endregion
+
+        public int coins;
+
+        public Coins(int coins)
+        {
+            this.coins = coins;
+        }
+
+        public Coins()
+            : this(0) { }
+    }
 }

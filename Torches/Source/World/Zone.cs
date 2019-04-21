@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using System.IO;
+
 using System.Diagnostics;
 using System.Drawing;
 using Torches.ECS;
@@ -16,316 +16,44 @@ namespace Torches
         public const int Width = 16;
         public const int Height = 8;
 
-        public int x { get; protected set; }
-        public int y { get; protected set; }
+        public int X { get; protected set; }
+        public int Y { get; protected set; }
 
         // List of tiles, indexed with tiles[y, x].
-        public Tile[,] tiles { get; set; }
-        protected List<Entity> entities { get; set; }
+        public Tile[,] Tiles { get; set; }
+        public List<Entity> Entities { get; set; }
 
         // Represents if a door is open in a zone, start from the right and go counterclockwise
         // (ie. right, up, left, down).
-        public bool[] doors { get; protected set; }
+        public bool[] Doors { get; set; }
 
-        public Zone()
+        private World World { get; }
+
+        public Zone(World world)
         {
-            tiles = new Tile[Height, Width];
-            entities = new List<Entity>();
-            x = 0;
-            y = 0;
+            World = world;
+            Tiles = new Tile[Height, Width];
+            Entities = new List<Entity>();
+            X = 0;
+            Y = 0;
         }
 
-        public Zone(int x, int y)
+        public Zone(int x, int y, World world)
         {
-            tiles = new Tile[Height, Width];
-            entities = new List<Entity>();
-            this.x = x;
-            this.y = y;
-
-            // Load zone from file.
-            try
-            {
-                // Load tiles from file
-                using (StreamReader sr = new StreamReader("Resources/BaseZones/" + x.ToString() + "," + y.ToString() + "/tiles.dat"))
-                {
-                    float index = -1;
-                    string line;
-                    while ((line = sr.ReadLine()) != null)
-                    {
-                        string[] segments = line.Split(' ');
-
-                        if (index == -1 )
-                        {
-                            if(segments.Length == 4)
-                            {
-                                bool right, up, left, down;
-
-                                if(bool.TryParse(segments[0], out right) &&
-                                    bool.TryParse(segments[1], out up) &&
-                                    bool.TryParse(segments[2], out left) &&
-                                    bool.TryParse(segments[3], out down)
-                                    )
-                                {
-                                    doors = new bool[4] { right, up, left, down };
-                                }
-                                else
-                                {
-                                    Trace.WriteLine($"Error: Error while parsing zone line {index + 2}: {line}");
-                                    doors = new bool[4] { false, false, false, false };
-                                }
-                            }
-                            else
-                            {
-                                Trace.WriteLine($"Error: Incorrect number of parameters in zone tiles, line {index + 2}: {line}");
-                            }
-                        }
-                        else
-                        {
-                            if (index < Width * Height)
-                            {
-                                if (segments.Length >= 2)
-                                {
-                                    // Create tile, input data from text file
-                                    tiles[(int)Math.Floor(index / Width), (int)index % Width] = new Tile();
-                                    tiles[(int)Math.Floor(index / Width), (int)index % Width].symbol = segments[0].First();
-                                    tiles[(int)Math.Floor(index / Width), (int)index % Width].isSolid = Convert.ToBoolean(segments[1]);
-                                }
-                                else
-                                {
-                                    Trace.WriteLine("Error: Invalid entity tile \"" + line + "\"");
-                                }
-                            }
-                            else
-                            {
-                                Trace.WriteLine("Error: Invalid tile file, too many lines");
-                                break;
-                            }
-                        }
-
-                        index++;
-                    }
-                }
-
-                // Load entities from file
-                using (StreamReader sr = new StreamReader("Resources/BaseZones/" + x.ToString() + "," + y.ToString() + "/entities.dat"))
-                {
-                    // Stores the index of the entity whose components are being filled.
-                    int currentIndex = -1;
-
-                    string line;
-                    while ((line = sr.ReadLine()) != null)
-                    {
-                        // Skip commented or blank lines.
-                        if(line.Length >= 2)
-                        {
-                            if (line.TrimStart().Substring(0, 2) == "//" || line.Trim() == "")
-                            {
-                                continue;
-                            }
-
-                            // Get strings left and right side of '='.
-                            string[] segments = line.Split('=');
-                            if (segments.Length == 1 || segments.Length == 2)
-                            {
-                                if (line == "Entity")
-                                {
-                                    currentIndex++;
-                                    entities.Add(new Entity());
-                                }
-                                else if (currentIndex >= 0 && entities.Count == currentIndex + 1)
-                                {
-                                    string component = segments[0].Trim();
-                                    string[] componentData = segments[1].Split(',');
-
-                                    // Remove leading and trailing whitespace from component data.
-                                    for (int i = 0; i < componentData.Length; i++)
-                                    {
-                                        componentData[i] = componentData[i].Trim();
-                                    }
-
-                                    if (component == "Flags")
-                                    {
-                                        foreach (string flag in componentData)
-                                        {
-                                            switch (flag)
-                                            {
-                                                case "Solid":
-                                                    entities[currentIndex].flags |= EntityFlags.Solid;
-                                                    break;
-                                                case "Player":
-                                                    entities[currentIndex].flags |= EntityFlags.Player;
-                                                    break;
-                                                case "Tribesman":
-                                                    entities[currentIndex].flags |= EntityFlags.Tribesman;
-                                                    break;
-                                                default:
-                                                    Trace.WriteLine("Error: Unknown flag '" + flag + "'");
-                                                    break;
-                                            }
-
-                                        }
-                                    }
-                                    else if (component == "ZonePosition")
-                                    {
-                                        // Ensure there are only 2 parameters.
-                                        if (componentData.Length == 2)
-                                        {
-                                            if (int.TryParse(componentData[0], out int tx) &&
-                                                int.TryParse(componentData[1], out int ty))
-                                            {
-                                                // Add the ZonePosition component to the current entity
-                                                entities[currentIndex].AddComponent(new ZonePosition(tx, ty));
-                                            }
-                                            else
-                                            {
-                                                Trace.WriteLine("Error: Error while converting ZonePosition parameters.");
-                                            }
-                                        }
-                                        else
-                                        {
-                                            Trace.WriteLine("Error: ZonePosition takes 2 parameters.");
-                                        }
-                                    }
-                                    else if (component == "Symbol")
-                                    {
-                                        if (componentData.Length == 1)
-                                        {
-                                            entities[currentIndex].AddComponent(new Symbol(componentData[0].First()));
-                                        }
-                                        else
-                                        {
-                                            Trace.WriteLine("Error: Symbol takes 1 parameters.");
-                                        }
-                                    }
-                                    else if (component == "Health")
-                                    {
-                                        if (componentData.Length == 2)
-                                        {
-                                            if (int.TryParse(componentData[0], out int health) &&
-                                                int.TryParse(componentData[1], out int maxHealth))
-                                            {
-                                                entities[currentIndex].AddComponent(new Health(health, maxHealth));
-                                            }
-                                            else
-                                            {
-                                                Trace.WriteLine("Error: Error while converting Health parameters");
-                                            }
-                                        }
-                                        else
-                                        {
-                                            Trace.WriteLine("Error: Health takes 2 parameters.");
-                                        }
-                                    }
-                                    else if (component == "Character")
-                                    {
-                                        if (componentData.Length == 1)
-                                        {
-                                            entities[currentIndex].AddComponent(new Character(componentData[0]));
-                                        }
-                                        else
-                                        {
-                                            Trace.WriteLine("Error: Character takes 1 parameter.");
-                                        }
-                                    }
-                                    else if (component == "Inventory")
-                                    {
-                                        entities[currentIndex].AddComponent(new Inventory());
-                                    }
-                                    else if (component == "Colour")
-                                    {
-                                        if (componentData.Length == 1)
-                                        {
-                                            entities[currentIndex].AddComponent(
-                                                new Colour(Color.FromName(componentData.First()))
-                                                );
-                                        }
-                                        else
-                                        {
-                                            Trace.WriteLine("Error: Colour takes 1 parameter.");
-                                        }
-                                    }
-                                    else if (component == "Enemy")
-                                    {
-                                        if(componentData.Length == 3)
-                                        {
-                                            // Load attack/defend patterns from file
-                                            string[] playerAttackPatternRaw = componentData[0].Split('|');
-                                            string[] playerDefendPatternRaw = componentData[1].Split('|');
-
-                                            int[] playerAttackPattern = new int[playerAttackPatternRaw.Length];
-                                            int[] playerDefendPattern = new int[playerDefendPatternRaw.Length];
-
-                                            // Convert arrays from string[] to int[].
-                                            for (int i = 0; i < playerAttackPatternRaw.Length; i++)
-                                            {
-                                                if(!int.TryParse(playerAttackPatternRaw[i], out playerAttackPattern[i]))
-                                                    Trace.WriteLine("Error: Error while parsing int for attack pattern.");
-                                            }
-
-                                            for (int i = 0; i < playerDefendPatternRaw.Length; i++)
-                                            {
-                                                if (!int.TryParse(playerDefendPatternRaw[i], out playerDefendPattern[i]))
-                                                    Trace.WriteLine("Error: Error while parsing int for defend pattern.");
-                                            }
-
-                                            // Get delay from file.
-                                            int delay;
-                                            if(!int.TryParse(componentData[2], out delay))
-                                            {
-                                                Trace.WriteLine("Error: Error while parsing int for delay.");
-                                            }
-
-                                            entities[currentIndex].AddComponent(
-                                                new Enemy(playerAttackPattern, playerDefendPattern, delay));
-                                        }
-                                        else
-                                        {
-                                            Trace.WriteLine("Error: Enemy takes 2 parameters.");
-                                        }
-                                    }
-                                    else if (component == "Damager")
-                                    {
-                                        if (componentData.Length == 1)
-                                        {
-                                            if (int.TryParse(componentData[0], out int damage))
-                                            {
-                                                entities[currentIndex].AddComponent(new Damager(damage));
-                                            }
-                                            else
-                                            {
-                                                Trace.WriteLine("Error: Error while converting Damager parameters");
-                                            }
-                                        }
-                                        else
-                                        {
-                                            Trace.WriteLine("Error: Damager takes 1 parameter.");
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    Trace.WriteLine("Error: Invalid Entity File (Resources/BaseZones/" + x.ToString() + ", " + y.ToString() + " /entities.dat)");
-                                }
-                            } // end if (segments.Length == 1 || segments.Length == 2)
-                        } // end if(line.Length >= 2)
-                    }
-                }
-            }
-            catch (IOException e)
-            {
-                Trace.WriteLine("The file could not be read:");
-                Trace.WriteLine(e.Message);
-
-                Game.Stop();
-            }
+            Tiles = new Tile[Height, Width];
+            Entities = new List<Entity>();
+            X = x;
+            Y = y;
+            World = world;
         }
 
-        public Zone(int x, int y, Tile[,] tiles, List<Entity> entities)
+        public Zone(int x, int y, Tile[,] tiles, List<Entity> entities, World world)
         {
-            this.x = x;
-            this.y = y;
-            this.tiles = tiles;
-            this.entities = entities;
+            X = x;
+            Y = y;
+            Tiles = tiles;
+            Entities = entities;
+            this.World = world;
         }
 
         public void AddTile(int x, int y, Tile tile)
@@ -333,7 +61,7 @@ namespace Torches
             // Make sure tile is within the bounds of the zone
             if(x >= 0 && x < Width && y >= 0 && y < Height)
             {
-                tiles[y, x] = tile;
+                Tiles[y, x] = tile;
             }
         }
 
@@ -346,17 +74,17 @@ namespace Torches
             }
 
             // Check if the tile at coord is solid
-            if (tiles[y, x].isSolid)
+            if (Tiles[y, x].IsSolid)
             {
                 return true;
             }
             
             // Check if a solid entity exists at the coord
-            foreach (Entity e in entities)
+            foreach (Entity e in Entities)
             {
                 if (e.HasFlag(EntityFlags.Solid))
                 {
-                    if (e.GetComponent<ECS.ZonePosition>().x == x && e.GetComponent<ECS.ZonePosition>().y == y)
+                    if (e.GetComponent<ECS.Position>().x == x && e.GetComponent<ECS.Position>().y == y)
                     {
                         return true;
                     }
@@ -374,11 +102,11 @@ namespace Torches
             }
 
             // Check if an entity exists at the coord
-            foreach (Entity e in entities)
+            foreach (Entity e in Entities)
             {
-                if(e.HasComponent<ECS.ZonePosition>())
+                if(e.HasComponent<ECS.Position>() && !e.Removed)
                 {
-                    if (e.GetComponent<ECS.ZonePosition>().x == x && e.GetComponent<ECS.ZonePosition>().y == y)
+                    if (e.GetComponent<ECS.Position>().x == x && e.GetComponent<ECS.Position>().y == y)
                     {
                         return e;
                     }
@@ -388,20 +116,58 @@ namespace Torches
             return null;
         }
 
+        public Entity GetEntityAt(Position p)
+        {
+            return GetEntityAt(p.x, p.y);
+        }
+
+        public Tile GetTileAt(int x, int y)
+        {
+            // Check if coordinate is within zone
+            if (x < 0 || x >= Width || y < 0 || y >= Height)
+            {
+                return null;
+            }
+
+            return Tiles[y, x];
+        }
+
+        public Tile GetTileAt(Position p)
+        {
+            return GetTileAt(p.x, p.y);
+        }
+
         // Remove all entities that are scheduled to be removed.
         public void Update()
         {
-            // Render tiles below removed entities.
-            foreach(Entity e in entities.Where(x => x.Removed))
+            // Render entities and tiles below removed entities.
+            foreach(Entity removed in Entities.Where(x => x.Removed))
             {
-                if(e.HasComponent<ZonePosition>())
+                if (removed.HasComponent<Position>())
                 {
-                    RenderTile(e.GetComponent<ZonePosition>().x, e.GetComponent<ZonePosition>().y);
+                    RenderTile(removed.GetComponent<Position>().x, removed.GetComponent<Position>().y);
+
+                    if(World.GetPlayer().GetComponent<Position>().x == removed.GetComponent<Position>().x
+                        && World.GetPlayer().GetComponent<Position>().y == removed.GetComponent<Position>().y)
+                    {
+                        Renderer.RenderEntity(World.GetPlayer());
+                    }
+                    else
+                    {
+                        Entity entity = GetEntityAt(removed.GetComponent<Position>().x, removed.GetComponent<Position>().y);
+                        if (entity != null)
+                        {
+                            if (!entity.Removed)
+                            {
+                                Renderer.RenderEntity(entity);
+                            }
+                        }
+                    }
                 }
             }
 
             // Remove entities from list.
-            entities.RemoveAll(x => x.Removed);
+            Entities.RemoveAll(x => x.Removed);
         }
 
         public void RenderAll()
@@ -417,7 +183,7 @@ namespace Torches
             }
 
             // Render entities.
-            foreach(Entity e in entities)
+            foreach(Entity e in Entities)
             {
                 Renderer.RenderEntity(e);
             }
@@ -428,13 +194,18 @@ namespace Torches
 
         public void RenderTile(int x, int y)
         {
-            Renderer.PrintAt(Constants.MapX + x, Constants.MapY + (Height - y - 1), tiles[y, x].symbol, Color.LightGray);
+            Renderer.PrintAt(Constants.MapX + x, Constants.MapY + (Height - y - 1), Tiles[y, x].Symbol, Color.LightGray);
+        }
+
+        public void RenderTile(Position p)
+        {
+            RenderTile(p.x, p.y);
         }
 
         public void RenderDoors()
         {
             // Right door.
-            if (doors[0])
+            if (Doors[0])
             {
                 Renderer.PrintAt(Constants.MapX + Width, Constants.MapY + Height / 2 - 1, ':', Color.LightGray);
             }
@@ -444,7 +215,7 @@ namespace Torches
             }
 
             // Top door.
-            if (doors[1])
+            if (Doors[1])
             {
                 Renderer.PrintAt(Constants.MapX + Width / 2 - 1, Constants.MapY - 1, '.', Color.LightGray);
                 Renderer.PrintAt(Constants.MapX + Width / 2    , Constants.MapY - 1, '.', Color.LightGray);
@@ -456,7 +227,7 @@ namespace Torches
             }
 
             // Left door.
-            if (doors[2])
+            if (Doors[2])
             {
                 Renderer.PrintAt(Constants.MapX - 1, Constants.MapY + Height / 2 - 1, ':', Color.LightGray);
             }
@@ -466,7 +237,7 @@ namespace Torches
             }
 
             // Bottom door.
-            if (doors[3])
+            if (Doors[3])
             {
                 Renderer.PrintAt(Constants.MapX + Width / 2 - 1, Constants.MapY + Height, '.', Color.LightGray);
                 Renderer.PrintAt(Constants.MapX + Width / 2    , Constants.MapY + Height, '.', Color.LightGray);

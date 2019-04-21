@@ -17,6 +17,7 @@ namespace Torches
 
         private static List<ECS.ISystem> systems;
 
+        public static bool Success { get; private set; } = false;
 
         // Disable selection in console (https://stackoverflow.com/questions/13656846/how-to-programmatic-disable-c-sharp-console-applications-quick-edit-mode)
         const int STD_INPUT_HANDLE = -10;
@@ -35,8 +36,7 @@ namespace Torches
             // Disable selection in console (https://stackoverflow.com/questions/13656846/how-to-programmatic-disable-c-sharp-console-applications-quick-edit-mode)
             const uint ENABLE_QUICK_EDIT = 0x0040;
             IntPtr consoleHandle = GetStdHandle(STD_INPUT_HANDLE);
-            uint consoleMode;
-            GetConsoleMode(consoleHandle, out consoleMode);
+            GetConsoleMode(consoleHandle, out uint consoleMode);
             consoleMode &= ~ENABLE_QUICK_EDIT;
             SetConsoleMode(consoleHandle, consoleMode);
             /////////////////////////////////////////////////////////////
@@ -45,10 +45,14 @@ namespace Torches
 
             world = new World();
 
-            systems = new List<ECS.ISystem>();
-            systems.Add(new ECS.MoveSystem());
-            systems.Add(new ECS.EnemySystem());
-            systems.Add(new ECS.TribesmanSystem());
+            systems = new List<ECS.ISystem>
+            {
+                new ECS.MoveSystem(),
+                new ECS.EnemySystem(),
+                new ECS.TribesmanSystem(),
+                new ECS.WeaponSystem(),
+                new ECS.LootSystem()
+            };
 
             while (running)
             {
@@ -57,7 +61,29 @@ namespace Torches
 
                 if(segments.First() == "quit" || segments.First() == "exit")
                 {
-                    running = false;
+                    Renderer.PrintGameOutputColoured("`WExit game? `w(lose progress) `R(yes/no)".PadRight(100));
+                    string result = InputCommand();
+                    if (result.ToLower() == "yes")
+                    {
+                        Stop(true);
+                    }
+                    else
+                    {
+                        Renderer.PrintGameOutput("Input a command...");
+                    }
+                }
+                else if (segments.First() == "restart" || segments.First() == "replay")
+                {
+                    Renderer.PrintGameOutputColoured("`WRestart game? `w(lose progress) `R(yes/no)".PadRight(100));
+                    string result = InputCommand();
+                    if(result.ToLower() == "yes")
+                    {
+                        Stop(false);
+                    }
+                    else
+                    {
+                        Renderer.PrintGameOutput("Input a command...");
+                    }
                 }
                 else if(segments.First() == "help" || segments.First() == "h")
                 {
@@ -78,12 +104,17 @@ namespace Torches
                                 "83-AF-00-23-EA-54-C5-97-F6-C0-47-1E-F2-80-0A-C6-EC-19-0E-92-22-FC-62-19-4B-6B-7E-9E-32-AD-8A-ED")
                         {
                             Renderer.PrintGameOutput("Access Granted ;)");
+                            // Only add cheat system if it hasn't already been added.
+                            if(!systems.OfType<ECS.CheatSystem>().Any())
+                            {
+                                systems.Add(new ECS.CheatSystem());
+                            }
                         }
                         else
                         {
                             Renderer.PrintGameOutputColoured("`RINTRUDER DETECTED... EXITING");
                             Thread.Sleep(3000);
-                            Stop();
+                            Stop(true);
                         }
                     }
                     
@@ -121,8 +152,9 @@ namespace Torches
             return command;
         }
 
-        public static void Stop()
+        public static void Stop(bool success)
         {
+            Success = success;
             running = false;
         }
     }

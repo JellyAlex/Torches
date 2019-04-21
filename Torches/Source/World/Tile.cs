@@ -8,14 +8,14 @@ namespace Torches
 {
     public class Tile
     {
-        public char symbol { get; set; }
-        public bool isSolid { get; set; }
+        public char Symbol { get; set; }
+        public bool IsSolid { get; set; }
         
 
         public Tile(char symbol = 'E', bool isSolid = false)
         {
-            this.symbol = symbol;
-            this.isSolid = isSolid;
+            Symbol = symbol;
+            IsSolid = isSolid;
         }
     }
 }

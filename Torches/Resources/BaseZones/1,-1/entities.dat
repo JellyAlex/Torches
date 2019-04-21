@@ -1,0 +1,6 @@
+Entity
+Flags			= Loot
+Position		= 13, 4
+Symbol			= o
+Colour			= Gold
+Inventory		= 5 gold, 2 iron, 3 rock

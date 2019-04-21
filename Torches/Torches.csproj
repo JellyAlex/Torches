@@ -55,14 +55,19 @@
     <Compile Include="Source\ECS\Entity.cs" />
     <Compile Include="Source\ECS\Systems\CheatSystem.cs" />
     <Compile Include="Source\ECS\Systems\EnemySystem.cs" />
+    <Compile Include="Source\ECS\Systems\LootSystem.cs" />
     <Compile Include="Source\ECS\Systems\TribesmanSystem.cs" />
+    <Compile Include="Source\ECS\Systems\WeaponSystem.cs" />
     <Compile Include="Source\Game.cs" />
     <Compile Include="Source\Menus\Help.cs" />
+    <Compile Include="Source\Menus\InventoryMenu.cs" />
+    <Compile Include="Source\Menus\WeaponMenu.cs" />
     <Compile Include="Source\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\Renderer.cs" />
     <Compile Include="Source\ECS\ISystem.cs" />
     <Compile Include="Source\ECS\Systems\MoveSystem.cs" />
+    <Compile Include="Source\ResourceManager.cs" />
     <Compile Include="Source\World\Tile.cs" />
     <Compile Include="Source\World\World.cs" />
     <Compile Include="Source\World\Zone.cs" />
@@ -70,6 +75,54 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="Resources\BaseZones\0,-2\entities.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\BaseZones\0,-2\tiles.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\BaseZones\-1,-2\entities.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\BaseZones\-1,-2\tiles.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\BaseZones\-1,-3\entities.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\BaseZones\-1,-3\tiles.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\BaseZones\-1,-4\entities.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\BaseZones\-1,-4\tiles.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\BaseZones\0,-1\entities.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\BaseZones\0,-1\tiles.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\BaseZones\0,-3\entities.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\BaseZones\0,-3\tiles.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\BaseZones\1,-1\entities.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\BaseZones\1,-1\tiles.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\BaseZones\1,-2\entities.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\BaseZones\1,-2\tiles.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\BaseZones\1,0\entities.dat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -82,12 +135,25 @@
     <None Include="Resources\BaseZones\0,0\tiles.dat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Resources\BaseZones\2,-1\entities.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\BaseZones\2,-1\tiles.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\BaseZones\2,-2\entities.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\BaseZones\2,-2\tiles.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Help\help.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

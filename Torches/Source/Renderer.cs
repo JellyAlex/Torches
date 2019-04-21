@@ -29,13 +29,13 @@ __________________________________________________________________
        Map                         Character
 --------..--------    --------------------------------------
 |                |    |                    | Items:        |
-|                |    | Health:            | 0             |
+|                |    | Health:  /         | 0             |
 |                |    | Weapon:            | 0             |
 :                :    | Helmet:            | 0             |
 |                |    | Chestplate:        | 0             |
 |                |    | Leggings:          | 0             |
 |                |    | Boots:             | 0             |
-|                |    |                    | 0             |
+|                |    | Coins: 0           | 0             |
 --------..--------    --------------------------------------
 __________________________________________________________________
 > 
@@ -184,20 +184,48 @@ __________________________________________________________________
 
         public static void RenderEntity(Entity e)
         {
-            if (e.HasComponent<ZonePosition>() && e.HasComponent<Symbol>())
+            if (e.HasComponent<Position>() && e.HasComponent<Symbol>())
             {
                 if (e.HasComponent<Colour>())
                 {
-                    PrintAt(Constants.MapX + e.GetComponent<ZonePosition>().x, Constants.MapY + Zone.Height - e.GetComponent<ZonePosition>().y - 1, e.GetComponent<Symbol>().symbol, e.GetComponent<Colour>().color);
+                    PrintAt(Constants.MapX + e.GetComponent<Position>().x, Constants.MapY + Zone.Height - e.GetComponent<Position>().y - 1, e.GetComponent<Symbol>().symbol, e.GetComponent<Colour>().color);
                 }
                 else
                 {
-                    PrintAt(Constants.MapX + e.GetComponent<ZonePosition>().x, Constants.MapY + Zone.Height - e.GetComponent<ZonePosition>().y - 1, e.GetComponent<Symbol>().symbol, Color.White);
+                    PrintAt(Constants.MapX + e.GetComponent<Position>().x, Constants.MapY + Zone.Height - e.GetComponent<Position>().y - 1, e.GetComponent<Symbol>().symbol, Color.White);
                 }
             }
             else
             {
                 Trace.WriteLine("Entity (id " + e.id + ") doesn't have required components to render.");
+            }
+        }
+
+        public static void RenderPlayerInfo(Entity player)
+        {
+            int i = 0;
+            foreach(KeyValuePair<string, int> itemstack in player.GetComponent<Inventory>().items)
+            {
+                // Only print seven items.
+                if (i >= 7)
+                    break;
+
+                PrintAt(Constants.PlayerItemsX, Constants.PlayerItemsY + 1 + i, $"{itemstack.Value}x {itemstack.Key}".PadRight(14), Color.LightGray);
+                i++;
+            }
+
+            // Print the player's health.
+            PrintAt(Constants.PlayerStatsX, Constants.PlayerStatsY + 1, $"Health: {player.GetComponent<Health>().health} / {player.GetComponent<Health>().maxHealth}".PadRight(19), Color.LightGray);
+
+            // Print the player's coins.
+            PrintAt(Constants.PlayerStatsX, Constants.PlayerStatsY + 7,
+                    $"Coins: {player.GetComponent<Coins>().coins}".PadRight(19), Color.LightGray);
+
+            // Print the player's weapon.
+            if (player.HasComponent<Weapon>())
+            {
+                PrintAt(Constants.PlayerStatsX, Constants.PlayerStatsY + 2, 
+                    $"Weapon: {player.GetComponent<Weapon>().name} ({player.GetComponent<Weapon>().damage})".PadRight(19), Color.LightGray);
             }
         }
     }

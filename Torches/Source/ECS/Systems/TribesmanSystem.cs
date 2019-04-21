@@ -55,7 +55,7 @@ namespace Torches.ECS
 
         private bool HandleTribesman(ref World world, int dx, int dy)
         {
-            Entity tribesman = world.GetCurrentZone().GetEntityAt(world.GetPlayer().GetComponent<ZonePosition>().x + dx, world.GetPlayer().GetComponent<ZonePosition>().y + dy);
+            Entity tribesman = world.GetCurrentZone().GetEntityAt(world.GetPlayer().GetComponent<Position>().x + dx, world.GetPlayer().GetComponent<Position>().y + dy);
             if (tribesman == null)
             {
                 return false;
