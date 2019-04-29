@@ -24,6 +24,12 @@ namespace Torches.ECS
             this.y = y;
         }
 
+        public Position(Position p)
+        {
+            x = p.x;
+            y = p.y;
+        }
+
         public Position TranslateX(int dx)
         {
             x += dx;
@@ -120,6 +126,9 @@ namespace Torches.ECS
 
         // Delay of attack/defence scroller in milliseconds
         public int delay;
+
+        // Keep track of the battle state to make sure when the player resumes the battle they are not always attacking.
+        public bool isPlayerAttacking = true;
 
         public Enemy(int[] playerAttackPattern, int[] playerDefendPattern, int delay)
         {

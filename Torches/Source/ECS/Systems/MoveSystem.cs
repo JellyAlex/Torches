@@ -10,7 +10,8 @@ namespace Torches.ECS
 {
     public class MoveSystem : ISystem
     {
-        public bool Update(string[] segments, ref World world)
+        public void Update(ref World world) { }
+        public bool UpdateCommand(string[] segments, ref World world)
         {
             if(segments.First() == "move" || segments.First() == "m")
             {
@@ -47,7 +48,15 @@ namespace Torches.ECS
                     ConsoleKeyInfo key;
                     do
                     {
-                        Renderer.PrintGameOutput("Use WASD or Arrow keys to move, SPACE to dig, ESC to finish.");
+                        if(Quests.TribesmanQuest == QuestStatus.Available)
+                        {
+                            Renderer.PrintGameOutput("Use WASD or Arrow keys to move, ESC to finish.");
+                        }
+                        else
+                        {
+                            Renderer.PrintGameOutput("Use WASD or Arrow keys to move, SPACE to dig, ESC to finish.");
+                        }
+                        
                         // Get arrow key input
                         key = Console.ReadKey(true);
 
@@ -67,7 +76,7 @@ namespace Torches.ECS
                         {
                             TryMovePlayer(ref world, 0, -1);
                         }
-                        else if(key.Key == ConsoleKey.Spacebar)
+                        else if(key.Key == ConsoleKey.Spacebar && Quests.TribesmanQuest != QuestStatus.Available)
                         {
                             if(Dig(ref world, world.GetPlayer().GetComponent<Position>())
                                 || Dig(ref world, new Position(world.GetPlayer().GetComponent<Position>().x + 1, world.GetPlayer().GetComponent<Position>().y))
@@ -97,6 +106,8 @@ namespace Torches.ECS
                 return false;
             }
         }
+
+        
 
         // This function moves the player if the position is available (ie. not solid and in map)
         private void TryMovePlayer(ref World world, int dx, int dy)
@@ -199,7 +210,7 @@ namespace Torches.ECS
                 {
                     e.RemoveFlag(EntityFlags.DigSpot)
                         .AddFlag(EntityFlags.Loot)
-                        .AddComponent(new Colour(System.Drawing.Color.SaddleBrown));
+                        .AddComponent(new Colour(System.Drawing.Color.Gray));
 
                     if (e.HasComponent<Symbol>())
                     {

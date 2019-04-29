@@ -35,11 +35,18 @@
 `wDescription: `WAttacks any enemies nearby.
 
 `WLoot
-Command:
+`wCommand:
 `r[l]oot
-`wDescription: `WOpens menu to swap items with from item pile directly below the player.
+`wDescription: `WOpens menu to swap items with from item pile
+				 directly below the player.
 
 `WDrop
 `wCommand:
 `r[d]rop
 `wDescription: `WOpens menu to drop items onto the ground.
+
+`WUse
+`wCommand:
+`r[u]se `w(item)
+`wDescription: `WAllows an item to be used/consumed
+`wItems may include: bandage

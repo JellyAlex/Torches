@@ -24,7 +24,7 @@ namespace Torches
             player
                 .AddComponent(new Position(8, 3))
                 .AddComponent(new Symbol('@'))
-                .AddComponent(new Colour(Color.DarkRed))
+                .AddComponent(new Colour(Color.DarkOrange))
                 .AddComponent(new Health(200, 200))
                 .AddComponent(new Damager(10))
                 .AddComponent(new Inventory())
@@ -119,6 +119,19 @@ namespace Torches
                     }
                 }
             }
+        }
+
+        public Zone GetZone(int x, int y)
+        {
+            foreach (Zone z in zones)
+            {
+                if(z.X == x && z.Y == y)
+                {
+                    return z;
+                }
+            }
+
+            return null;
         }
     }
 }

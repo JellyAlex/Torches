@@ -56,7 +56,11 @@
     <Compile Include="Source\ECS\Systems\CheatSystem.cs" />
     <Compile Include="Source\ECS\Systems\EnemySystem.cs" />
     <Compile Include="Source\ECS\Systems\LootSystem.cs" />
+    <Compile Include="Source\ECS\Systems\MazeGuideSystem.cs" />
+    <Compile Include="Source\ECS\Systems\HermitSystem.cs" />
+    <Compile Include="Source\ECS\Systems\MerchantSystem.cs" />
     <Compile Include="Source\ECS\Systems\TribesmanSystem.cs" />
+    <Compile Include="Source\ECS\Systems\UseSystem.cs" />
     <Compile Include="Source\ECS\Systems\WeaponSystem.cs" />
     <Compile Include="Source\Game.cs" />
     <Compile Include="Source\Menus\Help.cs" />
@@ -64,6 +68,7 @@
     <Compile Include="Source\Menus\WeaponMenu.cs" />
     <Compile Include="Source\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\Quests.cs" />
     <Compile Include="Source\Renderer.cs" />
     <Compile Include="Source\ECS\ISystem.cs" />
     <Compile Include="Source\ECS\Systems\MoveSystem.cs" />
@@ -145,6 +150,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Resources\BaseZones\2,-2\tiles.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\SystemData\merchant.dat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

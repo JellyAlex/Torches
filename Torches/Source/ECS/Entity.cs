@@ -5,20 +5,23 @@ using System.Text;
 using System.Threading.Tasks;
 
 using System.Diagnostics;
-using Torches.ECS;
 
 namespace Torches.ECS
 {
     [Flags]
     public enum EntityFlags : short
     {
-        None = 0,
-        Solid = 1,
-        Player = 2,
-        Tribesman = 4,
-        Enemy = 8,
-        Loot = 16,
-        DigSpot = 32
+        None            = 0,
+        Solid           = 1,
+        Player          = 2,
+        Tribesman       = 4,
+        Enemy           = 8,
+        Loot            = 16,
+        DigSpot         = 32,
+        MazeGuide       = 64,
+        Hermit          = 128,
+        HermitCompleter = 256,
+        Merchant        = 512
     }
 
     // An entity is a collection of components (information). It is treated differently depending on the data structures it contains.

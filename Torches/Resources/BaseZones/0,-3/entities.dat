@@ -1,0 +1,9 @@
+// Zone 0,-3 - Maze Room
+Entity
+Flags			= Loot
+Position		= 8, 0
+Symbol			= o
+Colour			= Gold
+Inventory		= 6 iron, 2 wood, 3 bandage
+Coins			= 80
+Weapon			= Doloire, 5

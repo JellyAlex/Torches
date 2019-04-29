@@ -27,16 +27,16 @@ namespace Torches
         private const string uiBase = @"
 __________________________________________________________________
        Map                         Character
---------..--------    --------------------------------------
-|                |    |                    | Items:        |
-|                |    | Health:  /         | 0             |
-|                |    | Weapon:            | 0             |
-:                :    | Helmet:            | 0             |
-|                |    | Chestplate:        | 0             |
-|                |    | Leggings:          | 0             |
-|                |    | Boots:             | 0             |
-|                |    | Coins: 0           | 0             |
---------..--------    --------------------------------------
+--------..--------    ---------------------------------------
+|                |    |                    | Items:         |
+|                |    | Health:  /         | 0              |
+|                |    | Weapon:            | 0              |
+:                :    | Helmet:            | 0              |
+|                |    | Chestplate:        | 0              |
+|                |    | Leggings:          | 0              |
+|                |    | Boots:             | 0              |
+|                |    | Coins: 0           | 0              |
+--------..--------    ---------------------------------------
 __________________________________________________________________
 > 
 __________________________________________________________________
@@ -52,11 +52,11 @@ __________________________________________________________________
             {
                 if (c == '(' || c == ')' || c == '.' || c == '\'' || c == ',')
                 {
-                    Console.Write(c, Color.Orange);
+                    Console.Write(c, Color.Red);
                 }
                 else if (c == '|' || c == '\\' || c == '/' || c == '_')
                 {
-                    Console.Write(c, Color.OrangeRed);
+                    Console.Write(c, Color.DarkOrange);
                 }
                 else if (c == '^')
                 {
@@ -123,7 +123,7 @@ __________________________________________________________________
             Console.SetCursorPosition(Constants.TextOutputX, Constants.TextOutputY);
 
             int prevTagIndex = -3;
-            Color color = Color.White;
+            Color color = Color.DarkKhaki;
 
             for (int i = 0; i < text.Length; i++)
             {
@@ -143,30 +143,6 @@ __________________________________________________________________
                         case 'r':
                             color = Color.DarkRed;
                             break;
-                        case 'G':
-                            color = Color.Green;
-                            break;
-                        case 'g':
-                            color = Color.LightGreen;
-                            break;
-                        case 'B':
-                            color = Color.Blue;
-                            break;
-                        case 'b':
-                            color = Color.LightBlue;
-                            break;
-                        case 'Y':
-                            color = Color.Yellow;
-                            break;
-                        case 'y':
-                            color = Color.LightYellow;
-                            break;
-                        case 'P':
-                            color = Color.Pink;
-                            break;
-                        case 'p':
-                            color = Color.Purple;
-                            break;
                     }
                 }
                 else if(text[i] == '`')
@@ -179,6 +155,25 @@ __________________________________________________________________
                 }
             }
 
+            Console.CursorVisible = true;
+        }
+
+        public static void PrintGameOutputDelayed(string text, int delay)
+        {
+            Console.CursorVisible = false;
+            Console.SetCursorPosition(Constants.TextOutputX, Constants.TextOutputY);
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                Console.Write(text[i], Color.DarkKhaki);
+                if(text[i] != ' ')
+                {
+                    Thread.Sleep(delay);
+                }
+                
+            }
+
+            Console.SetCursorPosition(Constants.TextInputX, Constants.TextInputY);
             Console.CursorVisible = true;
         }
 
@@ -210,7 +205,7 @@ __________________________________________________________________
                 if (i >= 7)
                     break;
 
-                PrintAt(Constants.PlayerItemsX, Constants.PlayerItemsY + 1 + i, $"{itemstack.Value}x {itemstack.Key}".PadRight(14), Color.LightGray);
+                PrintAt(Constants.PlayerItemsX, Constants.PlayerItemsY + 1 + i, $"{itemstack.Value}x {itemstack.Key}".PadRight(15), Color.LightGray);
                 i++;
             }
 

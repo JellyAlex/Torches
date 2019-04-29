@@ -53,7 +53,7 @@ namespace Torches
             Y = y;
             Tiles = tiles;
             Entities = entities;
-            this.World = world;
+            World = world;
         }
 
         public void AddTile(int x, int y, Tile tile)
@@ -194,7 +194,14 @@ namespace Torches
 
         public void RenderTile(int x, int y)
         {
-            Renderer.PrintAt(Constants.MapX + x, Constants.MapY + (Height - y - 1), Tiles[y, x].Symbol, Color.LightGray);
+            if(IsPos(0, -3))
+            {
+                Renderer.PrintAt(Constants.MapX + x, Constants.MapY + (Height - y - 1), Tiles[y, x].Symbol, Color.Gray);
+            }
+            else
+            {
+                Renderer.PrintAt(Constants.MapX + x, Constants.MapY + (Height - y - 1), Tiles[y, x].Symbol, Color.LightGray);
+            }
         }
 
         public void RenderTile(Position p)
@@ -247,6 +254,11 @@ namespace Torches
                 Renderer.PrintAt(Constants.MapX + Width / 2 - 1, Constants.MapY + Height, '-', Color.LightGray);
                 Renderer.PrintAt(Constants.MapX + Width / 2    , Constants.MapY + Height, '-', Color.LightGray);
             }
+        }
+
+        public bool IsPos(int x, int y)
+        {
+            return X == x && Y == y;
         }
     }
 }

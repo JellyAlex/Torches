@@ -11,7 +11,8 @@ namespace Torches.ECS
 {
     class EnemySystem : ISystem
     {
-        public bool Update(string[] segments, ref World world)
+        public void Update(ref World world) { }
+        public bool UpdateCommand(string[] segments, ref World world)
         {
             if (segments[0] == "interact" || segments[0] == "i" || segments[0] == "attack" || segments[0] == "a")
             {
@@ -71,10 +72,7 @@ namespace Torches.ECS
                 if (!enemy.HasComponent<Health>() || !enemy.HasComponent<Damager>())
                     return false;
 
-                // The index of the vertical line which the player tries to stop in the right region.
-                
-                
-                bool isAttacking = true;
+                ref bool isAttacking = ref enemy.GetComponent<Enemy>().isPlayerAttacking;
                 Console.CursorVisible = false;
 
                 // Create a stopwatch to keep track of delay between loops
@@ -85,12 +83,13 @@ namespace Torches.ECS
                 
                 PrintEnemyDetails(enemy, isAttacking);
 
+                // The index of the vertical line which the player tries to stop in the right region.
                 int scrollIndex = 0;
 
                 while (!(Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Escape))
                 {
                     if (enemy.GetComponent<Health>().health == 0 || world.GetPlayer().GetComponent<Health>().health == 0)
-                        continue;
+                        break;
 
                     if (isAttacking)
                     {
@@ -160,9 +159,10 @@ namespace Torches.ECS
                                 else
                                 {
                                     enemy.GetComponent<Health>().health = 0;
+                                    enemy.Removed = true;
 
                                     // Add the enemy's items to the player.
-                                    if(enemy.HasComponent<Inventory>())
+                                    if (enemy.HasComponent<Inventory>())
                                     {
                                         //world.GetPlayer().GetComponent<Inventory>().items = 
                                         //    (new Inventory(world.GetPlayer().GetComponent<Inventory>().items) + enemy.GetComponent<Inventory>()).items;
@@ -175,7 +175,7 @@ namespace Torches.ECS
                                         if(enemy.GetComponent<Inventory>().items.Count > 0)
                                         {
                                             Entity loot = new Entity(EntityFlags.Loot);
-                                            loot.AddComponent(new Position(enemy.GetComponent<Position>().x, enemy.GetComponent<Position>().y))
+                                            loot.AddComponent(new Position(enemy.GetComponent<Position>()))
                                                 .AddComponent(new Symbol('o'))
                                                 .AddComponent(new Colour(Color.Gray))
                                                 .AddComponent(new Inventory(enemy.GetComponent<Inventory>().items));
@@ -186,13 +186,69 @@ namespace Torches.ECS
                                         }
                                     }
 
+                                    // Give the enemy's weapon to the player.
                                     if(enemy.HasComponent<Weapon>())
                                     {
+                                        // Clear input fields
+                                        Renderer.PrintAt(Constants.TextInputX, Constants.TextInputY, new string(' ', 100), Color.White);
+                                        // Open menu to take weapon.
                                         WeaponMenu.Start(ref world, ref enemy);
+                                        // Show the player's new weapon.
+                                        Renderer.RenderPlayerInfo(world.GetPlayer());
+
+                                        // Create a loot drop on the ground for the weapon if the enemy has a propper weapon.
+                                        if (!(enemy.GetComponent<Weapon>().name == "" || enemy.GetComponent<Weapon>().name == "none" || enemy.GetComponent<Weapon>().damage == 1))
+                                        {
+                                            Entity loot = world.GetCurrentZone().GetEntityAt(enemy.GetComponent<Position>());
+                                            if (loot == null)
+                                            {
+                                                loot = new Entity(EntityFlags.Loot);
+                                                loot.AddComponent(new Position(enemy.GetComponent<Position>().x, enemy.GetComponent<Position>().y))
+                                                    .AddComponent(new Symbol('o'))
+                                                    .AddComponent(new Colour(Color.Gray))
+                                                    .AddComponent(new Weapon(enemy.GetComponent<Weapon>().name, enemy.GetComponent<Weapon>().damage));
+                                            }
+                                            else
+                                            {
+                                                if (loot.HasComponent<Weapon>())
+                                                {
+                                                    // Set the weapon to the weapon with the highest damage.
+                                                    loot.GetComponent<Weapon>().name = enemy.GetComponent<Weapon>().damage >= loot.GetComponent<Weapon>().damage
+                                                        ? enemy.GetComponent<Weapon>().name : loot.GetComponent<Weapon>().name;
+                                                    loot.GetComponent<Weapon>().damage = enemy.GetComponent<Weapon>().damage >= loot.GetComponent<Weapon>().damage
+                                                        ? enemy.GetComponent<Weapon>().damage : loot.GetComponent<Weapon>().damage;
+                                                }
+                                                else
+                                                {
+                                                    // Set the loot's weapon to a copy of the enemy's weapon.
+                                                    loot.AddComponent(new Weapon(enemy.GetComponent<Weapon>()));
+                                                }
+                                            }
+
+                                            Renderer.RenderEntity(loot);
+
+                                            world.GetCurrentZone().Entities.Add(loot);
+                                        }
+                                    }
+
+                                    // Give the enemy's coins to the player.
+                                    if(enemy.HasComponent<Coins>())
+                                    {
+                                        world.GetPlayer().GetComponent<Coins>().coins += enemy.GetComponent<Coins>().coins;
+                                        enemy.GetComponent<Coins>().coins = 0;
+                                        // Show the player's new coins.
+                                        Renderer.RenderPlayerInfo(world.GetPlayer());
+
+                                    }
+
+                                    // Check if the enemy complete's the hermit quest.
+                                    if(enemy.HasFlag(EntityFlags.HermitCompleter))
+                                    {
+                                        Quests.HermitQuest = QuestStatus.Completed;
                                     }
 
                                     PrintOutcome(enemy, true);
-                                    enemy.Removed = true;
+                                    
                                 }
 
                                 // Clear text input
@@ -205,7 +261,8 @@ namespace Torches.ECS
                                 {
                                     world.GetPlayer().GetComponent<Health>().health -= enemy.GetComponent<Damager>().damage * enemyCP.playerDefendPattern[scrollIndex];
                                     // Show the player's health.
-                                    Renderer.PrintAt(Constants.PlayerStatsX, Constants.PlayerStatsY + 1, $"Health: {world.GetPlayer().GetComponent<Health>().health} / {world.GetPlayer().GetComponent<Health>().maxHealth}", Color.LightGray);
+                                    //Renderer.PrintAt(Constants.PlayerStatsX, Constants.PlayerStatsY + 1, $"Health: {world.GetPlayer().GetComponent<Health>().health} / {world.GetPlayer().GetComponent<Health>().maxHealth}", Color.LightGray);
+                                    Renderer.RenderPlayerInfo(world.GetPlayer());
                                     isAttacking = true;
                                     scrollIndex = 0;
                                 }
@@ -213,7 +270,8 @@ namespace Torches.ECS
                                 {
                                     world.GetPlayer().GetComponent<Health>().health = 0;
                                     // Show the player's health.
-                                    Renderer.PrintAt(Constants.PlayerStatsX, Constants.PlayerStatsY + 1, $"Health: {world.GetPlayer().GetComponent<Health>().health} / {world.GetPlayer().GetComponent<Health>().maxHealth}", Color.LightGray);
+                                    //Renderer.PrintAt(Constants.PlayerStatsX, Constants.PlayerStatsY + 1, $"Health: {world.GetPlayer().GetComponent<Health>().health} / {world.GetPlayer().GetComponent<Health>().maxHealth}", Color.LightGray);
+                                    Renderer.RenderPlayerInfo(world.GetPlayer());
                                     PrintOutcome(enemy, false);
                                     Game.Stop(false);
                                 }

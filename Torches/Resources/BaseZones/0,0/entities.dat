@@ -1,12 +1,17 @@
 // 0, 0
-Entity
-Flags			= Tribesman, Solid
-Position	    = 3, 1
-Symbol			= @
-Colour			= Gray
 
 Entity
 Flags			= DigSpot
 Position		= 4, 7
 Symbol			= .
-Inventory		= 3 rock
+Inventory		= 3 rock, 1 wooden staff
+Coins			= 8
+Colour			= LightGray
+
+Entity
+Flags			= DigSpot
+Position		= 2, 1
+Symbol			= .
+Inventory		= 2 rock, 1 iron
+Coins			= 12
+Colour			= LightGray

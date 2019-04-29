@@ -1,0 +1,18 @@
+// Zone (0, -1) - Merchant zone
+Entity
+Flags			= Solid, Merchant
+Position		= 0, 6
+Symbol			= @
+Character		= Merchant
+Colour			= Gold
+
+Entity
+Flags			= Solid
+Position		= 5, 6
+Symbol			= %
+Colour			= Red
+Health			= 150, 150
+Enemy			= 1|1|1|2|2|2|2|4|4|4|4|2|2|2|2|1|1|1, 5|5|5|3|3|2|1|1|2|3|3|5|5|5, 50
+Damager			= 15
+Character		= Goblin
+Coins			= 20

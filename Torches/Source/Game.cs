@@ -51,8 +51,16 @@ namespace Torches
                 new ECS.EnemySystem(),
                 new ECS.TribesmanSystem(),
                 new ECS.WeaponSystem(),
-                new ECS.LootSystem()
+                new ECS.LootSystem(),
+                new ECS.UseSystem(),
+                new ECS.HermitSystem(),
+                new ECS.MazeGuideSystem(),
+                new ECS.MerchantSystem()
             };
+
+            Quests.TribesmanQuest = QuestStatus.Available;
+            Quests.HermitQuest = QuestStatus.Available;
+            //Quests.MazeQuest = QuestStatus.Available;
 
             while (running)
             {
@@ -74,7 +82,7 @@ namespace Torches
                 }
                 else if (segments.First() == "restart" || segments.First() == "replay")
                 {
-                    Renderer.PrintGameOutputColoured("`WRestart game? `w(lose progress) `R(yes/no)".PadRight(100));
+                    Renderer.PrintGameOutputColoured("Restart game? `w(lose progress) `R(yes/no)".PadRight(100));
                     string result = InputCommand();
                     if(result.ToLower() == "yes")
                     {
@@ -131,7 +139,12 @@ namespace Torches
         {
             foreach(ECS.ISystem s in systems)
             {
-                if (s.Update(segments, ref world))
+                s.Update(ref world);
+            }
+
+            foreach(ECS.ISystem s in systems)
+            {
+                if (s.UpdateCommand(segments, ref world))
                 {
                     world.Update();
                     return true;

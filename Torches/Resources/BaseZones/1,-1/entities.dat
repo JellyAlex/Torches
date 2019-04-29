@@ -1,6 +1,29 @@
+// Zone(1, -1) - Hermit Quest / Mountain
 Entity
 Flags			= Loot
 Position		= 13, 4
 Symbol			= o
 Colour			= Gold
 Inventory		= 5 gold, 2 iron, 3 rock
+
+Entity
+Flags			= Solid, Hermit
+Position		= 8, 3
+Symbol			= @
+Colour			= Gray
+Character		= Hermit
+
+Entity
+Flags			= DigSpot
+Position		= 3, 7
+Symbol			= .
+Inventory		= 1 iron, 1 rock
+Coins			= 8
+Colour			= LightGray
+
+Entity
+Flags			= DigSpot
+Position		= 9, 1
+Symbol			= .
+Coins			= 24
+Colour			= LightGray

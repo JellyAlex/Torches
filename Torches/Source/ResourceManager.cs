@@ -59,11 +59,10 @@ namespace Torches
                                 if (segments.Length >= 2)
                                 {
                                     // Create tile, input data from text file
-                                    zone.Tiles[(int)Math.Floor(index / Zone.Width), (int)index % Zone.Width] = new Tile
-                                    {
-                                        Symbol = segments[0].First(),
-                                        IsSolid = Convert.ToBoolean(segments[1])
-                                    };
+                                    zone.Tiles[(int)Math.Floor(index / Zone.Width), (int)index % Zone.Width] = new Tile(
+                                        segments[0].First(),
+                                        Convert.ToBoolean(segments[1])
+                                    );
                                 }
                                 else
                                 {
@@ -118,8 +117,6 @@ namespace Torches
                                         componentData[i] = componentData[i].Trim();
                                     }
 
-                                    Trace.WriteLine($"Adding component {component} to entity {currentIndex} zone {x} {y}");
-
                                     if (component == "Flags")
                                     {
                                         foreach (string flag in componentData)
@@ -141,11 +138,22 @@ namespace Torches
                                                 case "DigSpot":
                                                     zone.Entities[currentIndex].flags |= EntityFlags.DigSpot;
                                                     break;
+                                                case "MazeGuide":
+                                                    zone.Entities[currentIndex].flags |= EntityFlags.MazeGuide;
+                                                    break;
+                                                case "Hermit":
+                                                    zone.Entities[currentIndex].flags |= EntityFlags.Hermit;
+                                                    break;
+                                                case "HermitCompleter":
+                                                    zone.Entities[currentIndex].flags |= EntityFlags.HermitCompleter;
+                                                    break;
+                                                case "Merchant":
+                                                    zone.Entities[currentIndex].flags |= EntityFlags.Merchant;
+                                                    break;
                                                 default:
                                                     Trace.WriteLine("Error: Unknown flag '" + flag + "'");
                                                     break;
                                             }
-
                                         }
                                     }
                                     else if (component == "Position")
@@ -291,12 +299,16 @@ namespace Torches
                                         foreach (string rawItemStack in componentData)
                                         {
                                             string[] rawItemStackSplit = rawItemStack.Split(' ');
-                                            if (rawItemStackSplit.Length == 2)
+                                            if (rawItemStackSplit.Length >= 2)
                                             {
                                                 if (int.TryParse(rawItemStackSplit[0], out int itemCount))
                                                 {
-                                                    inventory.items.Add(rawItemStackSplit[1], itemCount);
-                                                    Trace.WriteLine($"Added item stack: {rawItemStack}");
+                                                    string itemName = "";
+                                                    for(int i = 1; i < rawItemStackSplit.Length; i++)
+                                                    {
+                                                        itemName += rawItemStackSplit[i] + " ";
+                                                    }
+                                                    inventory.items.Add(itemName.TrimEnd(), itemCount);
                                                 }
                                                 else
                                                 {
@@ -308,8 +320,6 @@ namespace Torches
                                                 Trace.WriteLine($"Error: Invalid item stack: {rawItemStack}");
                                             }
                                         }
-                                        
-                                        Trace.WriteLine("Adding inventory component.");
                                         zone.Entities[currentIndex].AddComponent(inventory);
                                     }
                                     else if (component == "Weapon")
@@ -332,6 +342,24 @@ namespace Torches
                                         else
                                         {
                                             Trace.WriteLine("Error: Invalid number of parameters on weapon component.");
+                                        }
+                                    }
+                                    else if (component == "Coins")
+                                    {
+                                        if(componentData.Length == 1)
+                                        {
+                                            if (int.TryParse(componentData[0], out int coins))
+                                            {
+                                                zone.Entities[currentIndex].AddComponent(new Coins(coins));
+                                            }
+                                            else
+                                            {
+                                                Trace.WriteLine($"Error: Invalid coin amount: {componentData[0]}");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            zone.Entities[currentIndex].AddComponent(new Coins());
                                         }
                                     }
                                 }

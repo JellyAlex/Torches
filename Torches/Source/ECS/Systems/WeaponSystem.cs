@@ -8,12 +8,12 @@ namespace Torches.ECS
 {
     public class WeaponSystem : ISystem
     {
-        public bool Update(string[] segments, ref World world)
+        public void Update(ref World world)
         {
             // Loop through entities and set their damage values to the damage of their weapon.
-            foreach(Entity e in world.GetCurrentZone().Entities)
+            foreach (Entity e in world.GetCurrentZone().Entities)
             {
-                if(e.HasComponent<Damager>())
+                if (e.HasComponent<Damager>())
                 {
                     if (e.HasComponent<Weapon>())
                     {
@@ -31,7 +31,7 @@ namespace Torches.ECS
             {
                 if (world.GetPlayer().HasComponent<Weapon>())
                 {
-                    world.GetPlayer().GetComponent<Damager>().damage = 
+                    world.GetPlayer().GetComponent<Damager>().damage =
                         world.GetPlayer().GetComponent<Damager>().baseDamage * world.GetPlayer().GetComponent<Weapon>().damage;
                 }
                 else
@@ -40,7 +40,9 @@ namespace Torches.ECS
                 }
             }
 
-            // This system does not want to stop the execution of commands, so return false.
+        }
+        public bool UpdateCommand(string[] segments, ref World world)
+        {
             return false;
         }
     }

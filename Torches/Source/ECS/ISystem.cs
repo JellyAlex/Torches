@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Torches.ECS
 {
-    // A system is a class which adds functionality to the entities. (ie. completes all logic)
+    // A system is a class which completes functionality/logic for certain entities.
     public interface ISystem
     {
-        bool Update(string[] segments, ref World world);
+        void Update(ref World world);
+        bool UpdateCommand(string[] segments, ref World world);
     }
 }

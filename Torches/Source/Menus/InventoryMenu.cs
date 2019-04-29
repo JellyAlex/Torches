@@ -12,6 +12,11 @@ namespace Torches
     {
         public static void Start(string name1, string name2, ref Dictionary<string, int> inv1, ref Dictionary<string, int> inv2)
         {
+            if(inv1.Count == 0 && inv2.Count == 0)
+            {
+                return;
+            }
+
             int row = 0; // Row number, starting from top.
             bool left = inv1.Count > 0; // If the left column is selected.
 

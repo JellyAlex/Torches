@@ -1,0 +1,6 @@
+// Zone(0, -2) - Double Corridoor Room
+Entity
+Flags			= Solid, MazeGuide
+Position		= 9, 0
+Symbol			= @
+Colour			= Gray

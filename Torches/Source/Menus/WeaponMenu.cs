@@ -28,6 +28,10 @@ namespace Torches
                     e.GetComponent<Weapon>().name = tempName;
                     e.GetComponent<Weapon>().damage = tempDamage;
                 }
+
+                // Clear output field.
+                Renderer.PrintGameOutput(new string(' ', 100) + "\n"
+                    + new string(' ', 100) + "\n");
             }
         }
     }
