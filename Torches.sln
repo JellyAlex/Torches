@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.539
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.202
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Torches", "Torches\Torches.csproj", "{5A28E835-D4DA-4641-999E-F731CA117512}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorchesEditor", "TorchesEditor\TorchesEditor.csproj", "{C7251F7C-9DC6-42B8-87C6-267FD5DF0D5D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{5A28E835-D4DA-4641-999E-F731CA117512}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A28E835-D4DA-4641-999E-F731CA117512}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A28E835-D4DA-4641-999E-F731CA117512}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7251F7C-9DC6-42B8-87C6-267FD5DF0D5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7251F7C-9DC6-42B8-87C6-267FD5DF0D5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7251F7C-9DC6-42B8-87C6-267FD5DF0D5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7251F7C-9DC6-42B8-87C6-267FD5DF0D5D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
